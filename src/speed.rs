@@ -50,6 +50,10 @@ impl Speed {
         if self.current < 0. {
             self.current += self.friction;
         }
+
+        if self.current.abs() < self.friction {
+            self.current = 0.
+        }
     }
 }
 
