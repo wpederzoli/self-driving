@@ -19,15 +19,17 @@ impl Default for Movement {
         Movement {
             position: Position::default(),
             direction: Direction::default(),
-            speed: Speed::default(),
-            acceleration: Acceleration::default(),
+            speed: Speed::new(1.),
+            acceleration: Acceleration::new(0.2),
         }
     }
 }
 
 impl Movement {
     pub fn locomote(&mut self) {
-        self.position.move_towards(&self.direction.get());
+        self.speed.add(self.acceleration.get());
+        self.position
+            .move_towards(&self.direction.get(), self.speed.get());
     }
 
     pub fn get_x(&self) -> f32 {

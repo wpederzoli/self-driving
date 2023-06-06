@@ -23,27 +23,27 @@ impl Position {
         self.y
     }
 
-    pub fn move_towards(&mut self, direction: &DirectionType) {
+    pub fn move_towards(&mut self, direction: &DirectionType, speed: f32) {
         match direction {
-            DirectionType::Forward => self.y += 1.,
-            DirectionType::Reverse => self.y -= 1.,
-            DirectionType::Left => self.x -= 1.,
-            DirectionType::Right => self.x += 1.,
+            DirectionType::Forward => self.y += speed,
+            DirectionType::Reverse => self.y -= speed,
+            DirectionType::Left => self.x -= speed,
+            DirectionType::Right => self.x += speed,
             DirectionType::ForwardLeft => {
-                self.x -= 0.5;
-                self.y += 0.5;
+                self.x -= speed as f32 / 2.;
+                self.y += speed as f32 / 2.;
             }
             DirectionType::ForwardRight => {
-                self.x += 0.5;
-                self.y += 0.5;
+                self.x += speed as f32 / 2.;
+                self.y += speed as f32 / 2.;
             }
             DirectionType::ReverseLeft => {
-                self.x -= 0.5;
-                self.y -= 0.5;
+                self.x -= speed as f32 / 2.;
+                self.y -= speed as f32 / 2.;
             }
             DirectionType::ReverseRight => {
-                self.x += 0.5;
-                self.y -= 0.5;
+                self.x += speed as f32 / 2.;
+                self.y -= speed as f32 / 2.;
             }
             DirectionType::Stop => {
                 self.x = self.x;
