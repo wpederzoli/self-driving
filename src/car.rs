@@ -1,39 +1,31 @@
 use bevy::{
-    prelude::{default, Color, Commands, Component, Rect},
+    prelude::{default, Color, Component, Query, Transform, Vec3},
     sprite::{Sprite, SpriteBundle},
 };
 
+use crate::movement::{Direction, Position};
+
 #[derive(Component)]
-pub struct Car {
-    x: f32,
-    y: f32,
-    width: u32,
-    height: u32,
+pub struct Car;
+
+pub fn draw_car() -> SpriteBundle {
+    SpriteBundle {
+        sprite: Sprite {
+            color: Color::RED,
+            ..default()
+        },
+        transform: Transform {
+            translation: Vec3::new(10., 10., 1.),
+            scale: Vec3::new(30., 50., 1.),
+            ..default()
+        },
+        ..default()
+    }
 }
 
-impl Car {
-    pub fn new(x: f32, y: f32, width: u32, height: u32) -> Self {
-        Car {
-            x,
-            y,
-            width,
-            height,
-        }
-    }
-
-    pub fn draw(&self, mut commands: Commands) {
-        commands.spawn(SpriteBundle {
-            sprite: Sprite {
-                color: Color::RED,
-                rect: Some(Rect::new(
-                    self.x - (self.width / 2) as f32,
-                    self.y - (self.height / 2) as f32,
-                    self.x + (self.width / 2) as f32,
-                    self.y + (self.height / 2) as f32,
-                )),
-                ..default()
-            },
-            ..default()
-        });
-    }
+pub fn move_car(mut car: Query<(&Car, &mut Position, &Direction, &mut Transform)>) {
+    let (_, mut pos, dir, mut transform) = car.single_mut();
+    pos.move_towards(&dir.get());
+    transform.translation.x = pos.get_x();
+    transform.translation.y = pos.get_y();
 }

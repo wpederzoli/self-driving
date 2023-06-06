@@ -1,7 +1,9 @@
 use bevy::{prelude::*, window::WindowResolution};
 use car::Car;
+use movement::{Direction, Position};
 
 mod car;
+mod movement;
 
 fn main() {
     App::new()
@@ -13,16 +15,17 @@ fn main() {
             ..default()
         }))
         .add_startup_system(setup)
-        .add_system(draw)
+        .add_system(car::move_car)
+        .add_system(bevy::window::close_on_esc)
         .run();
 }
 
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-    commands.spawn(Car::new(10., 10., 20, 30));
-}
-
-fn draw(query: Query<&Car>, commands: Commands) {
-    let car = query.single();
-    car.draw(commands);
+    commands.spawn((
+        Car,
+        Position::default(),
+        Direction::default(),
+        car::draw_car(),
+    ));
 }
