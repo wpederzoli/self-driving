@@ -23,8 +23,30 @@ impl Position {
 
     pub fn move_towards(&mut self, direction: &DirectionType) {
         match direction {
-            DirectionType::Forward => self.y += 10.,
-            _ => println!("direction"),
+            DirectionType::Forward => self.y += 1.,
+            DirectionType::Reverse => self.y -= 1.,
+            DirectionType::Left => self.x -= 1.,
+            DirectionType::Right => self.x += 1.,
+            DirectionType::ForwardLeft => {
+                self.x -= 0.5;
+                self.y += 0.5;
+            }
+            DirectionType::ForwardRight => {
+                self.x += 0.5;
+                self.y += 0.5;
+            }
+            DirectionType::ReverseLeft => {
+                self.x -= 0.5;
+                self.y -= 0.5;
+            }
+            DirectionType::ReverseRight => {
+                self.x += 0.5;
+                self.y -= 0.5;
+            }
+            DirectionType::Stop => {
+                self.x = self.x;
+                self.y = self.y;
+            }
         }
     }
 }
@@ -34,13 +56,17 @@ pub struct Direction(DirectionType);
 
 impl Default for Direction {
     fn default() -> Self {
-        Direction(DirectionType::Forward)
+        Direction(DirectionType::Stop)
     }
 }
 
 impl Direction {
     pub fn get(&self) -> DirectionType {
         self.0
+    }
+
+    pub fn set(&mut self, new_direction: DirectionType) {
+        self.0 = new_direction;
     }
 }
 
