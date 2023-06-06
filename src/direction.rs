@@ -19,7 +19,7 @@ impl Direction {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum DirectionType {
     Right,
     Left,

@@ -25,7 +25,7 @@ pub fn draw_car() -> SpriteBundle {
 
 pub fn move_car(mut car: Query<(&Car, &mut Movement, &mut Transform)>) {
     let (_, mut m, mut transform) = car.single_mut();
-    m.locomote();
+    m.accelerate();
     transform.translation.x = m.get_x();
     transform.translation.y = m.get_y();
 }

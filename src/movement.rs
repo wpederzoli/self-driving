@@ -5,11 +5,11 @@ use crate::{
 };
 use bevy::prelude::*;
 
-// Movement component that has position, direction, speed and acceleration components
 #[derive(Component)]
 pub struct Movement {
     position: Position,
     direction: Direction,
+    last_direction: DirectionType,
     speed: Speed,
     acceleration: Acceleration,
 }
@@ -19,17 +19,22 @@ impl Default for Movement {
         Movement {
             position: Position::default(),
             direction: Direction::default(),
-            speed: Speed::new(1.),
+            last_direction: DirectionType::Stop,
+            speed: Speed::new(0., 3., 0.05),
             acceleration: Acceleration::new(0.2),
         }
     }
 }
 
 impl Movement {
-    pub fn locomote(&mut self) {
+    pub fn accelerate(&mut self) {
         self.speed.add(self.acceleration.get());
-        self.position
-            .move_towards(&self.direction.get(), self.speed.get());
+        if self.direction.get() == DirectionType::Stop {
+            self.decelerate();
+        } else {
+            self.position
+                .move_towards(&self.direction.get(), self.speed.get());
+        }
     }
 
     pub fn get_x(&self) -> f32 {
@@ -41,6 +46,22 @@ impl Movement {
     }
 
     pub fn set_direction(&mut self, direction: DirectionType) {
-        self.direction.set(direction);
+        if direction != self.direction.get() {
+            self.last_direction = self.direction.get();
+            self.direction.set(direction);
+        }
+    }
+
+    fn decelerate(&mut self) {
+        if self.speed.get() > 0. {
+            self.speed.add(-self.acceleration.get())
+        }
+
+        if self.speed.get() < 0. {
+            self.speed.add(self.acceleration.get());
+        }
+
+        self.position
+            .move_towards(&self.last_direction, self.speed.get());
     }
 }
