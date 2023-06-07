@@ -28,14 +28,22 @@ impl Default for Movement {
 
 impl Movement {
     pub fn accelerate(&mut self) {
-        self.speed.add(self.acceleration.get());
         match (self.direction.get(), self.last_direction) {
-            (DirectionType::Stop, DirectionType::Forward | DirectionType::Reverse) => {
-                self.decelerate()
+            (DirectionType::Right | DirectionType::Left, _) => self.decelerate(),
+            (
+                DirectionType::Stop,
+                DirectionType::Forward
+                | DirectionType::ForwardLeft
+                | DirectionType::ForwardRight
+                | DirectionType::Reverse
+                | DirectionType::ReverseLeft
+                | DirectionType::ReverseRight,
+            ) => self.decelerate(),
+            _ => {
+                self.speed.add(self.acceleration.get());
+                self.position
+                    .move_towards(&self.direction.get(), self.speed.get());
             }
-            _ => self
-                .position
-                .move_towards(&self.direction.get(), self.speed.get()),
         }
     }
 
@@ -60,14 +68,16 @@ impl Movement {
 
     fn decelerate(&mut self) {
         if self.speed.get() > 0. {
-            self.speed.add(-self.acceleration.get())
+            self.speed.add(-self.acceleration.get());
         }
 
         if self.speed.get() < 0. {
             self.speed.add(self.acceleration.get());
         }
 
-        self.position
-            .move_towards(&self.last_direction, self.speed.get());
+        if self.speed.get().abs() > 0. {
+            self.position
+                .move_towards(&self.last_direction, self.speed.get());
+        }
     }
 }

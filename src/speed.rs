@@ -25,6 +25,7 @@ impl Speed {
             friction,
         }
     }
+
     pub fn get(&self) -> f32 {
         self.current
     }

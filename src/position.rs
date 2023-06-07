@@ -59,20 +59,20 @@ impl Position {
             DirectionType::Left => self.rotate(0.01),
             DirectionType::Right => self.rotate(-0.01),
             DirectionType::ForwardLeft => {
-                self.x -= speed as f32 / 2.;
-                self.y += speed as f32 / 2.;
+                self.rotate(0.01);
+                self.forward(speed);
             }
             DirectionType::ForwardRight => {
-                self.x += speed as f32 / 2.;
-                self.y += speed as f32 / 2.;
+                self.rotate(-0.01);
+                self.forward(speed);
             }
             DirectionType::ReverseLeft => {
-                self.x -= speed as f32 / 2.;
-                self.y -= speed as f32 / 2.;
+                self.rotate(-0.01);
+                self.backwards(speed);
             }
             DirectionType::ReverseRight => {
-                self.x += speed as f32 / 2.;
-                self.y -= speed as f32 / 2.;
+                self.rotate(0.01);
+                self.backwards(speed);
             }
             DirectionType::Stop => {
                 self.x = self.x;
