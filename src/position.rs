@@ -32,14 +32,30 @@ impl Position {
         self.angle
     }
 
+    fn forward(&mut self, speed: f32) {
+        let mut t = Transform::from_xyz(self.x, self.y, 1.);
+        t.rotation = Quat::from_rotation_z(self.angle);
+
+        self.x += speed * t.up().x;
+        self.y += speed * t.up().y;
+    }
+
+    fn backwards(&mut self, speed: f32) {
+        let mut t = Transform::from_xyz(self.x, self.y, 1.);
+        t.rotation = Quat::from_rotation_z(self.angle);
+
+        self.x += speed * t.down().x;
+        self.y += speed * t.down().y;
+    }
+
     fn rotate(&mut self, speed: f32) {
         self.angle += speed;
     }
 
     pub fn move_towards(&mut self, direction: &DirectionType, speed: f32) {
         match direction {
-            DirectionType::Forward => self.y += speed,
-            DirectionType::Reverse => self.y -= speed,
+            DirectionType::Forward => self.forward(speed),
+            DirectionType::Reverse => self.backwards(speed),
             DirectionType::Left => self.rotate(0.01),
             DirectionType::Right => self.rotate(-0.01),
             DirectionType::ForwardLeft => {
