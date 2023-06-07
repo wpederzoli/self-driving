@@ -52,26 +52,26 @@ impl Position {
         self.angle += speed;
     }
 
-    pub fn move_towards(&mut self, direction: &DirectionType, speed: f32) {
+    pub fn move_towards(&mut self, direction: &DirectionType, speed: f32, rotation_speed: f32) {
         match direction {
             DirectionType::Forward => self.forward(speed),
             DirectionType::Reverse => self.backwards(speed),
-            DirectionType::Left => self.rotate(0.05),
-            DirectionType::Right => self.rotate(-0.05),
+            DirectionType::Left => self.rotate(rotation_speed),
+            DirectionType::Right => self.rotate(-rotation_speed),
             DirectionType::ForwardLeft => {
-                self.rotate(0.05);
+                self.rotate(rotation_speed);
                 self.forward(speed);
             }
             DirectionType::ForwardRight => {
-                self.rotate(-0.05);
+                self.rotate(-rotation_speed);
                 self.forward(speed);
             }
             DirectionType::ReverseLeft => {
-                self.rotate(-0.05);
+                self.rotate(-rotation_speed);
                 self.backwards(speed);
             }
             DirectionType::ReverseRight => {
-                self.rotate(0.05);
+                self.rotate(rotation_speed);
                 self.backwards(speed);
             }
             DirectionType::Stop => {

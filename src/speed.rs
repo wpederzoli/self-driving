@@ -4,6 +4,7 @@ use bevy::prelude::*;
 pub struct Speed {
     current: f32,
     max: f32,
+    rotation: f32,
     friction: f32,
 }
 
@@ -12,22 +13,28 @@ impl Default for Speed {
         Speed {
             current: 0.,
             max: 1.,
+            rotation: 0.,
             friction: 0.,
         }
     }
 }
 
 impl Speed {
-    pub fn new(speed: f32, max: f32, friction: f32) -> Self {
+    pub fn new(speed: f32, max: f32, rotation: f32, friction: f32) -> Self {
         Speed {
             current: speed,
             max,
+            rotation,
             friction,
         }
     }
 
     pub fn get(&self) -> f32 {
         self.current
+    }
+
+    pub fn get_rotation(&self) -> f32 {
+        self.rotation
     }
 
     pub fn add(&mut self, speed: f32) {

@@ -20,7 +20,7 @@ impl Default for Movement {
             position: Position::default(),
             direction: Direction::default(),
             last_direction: DirectionType::Stop,
-            speed: Speed::new(0., 3., 0.05),
+            speed: Speed::new(0., 3., 0.05, 0.05),
             acceleration: Acceleration::new(0.2),
         }
     }
@@ -41,8 +41,11 @@ impl Movement {
             ) => self.decelerate(),
             _ => {
                 self.speed.add(self.acceleration.get());
-                self.position
-                    .move_towards(&self.direction.get(), self.speed.get());
+                self.position.move_towards(
+                    &self.direction.get(),
+                    self.speed.get(),
+                    self.speed.get_rotation(),
+                );
             }
         }
     }
@@ -76,8 +79,11 @@ impl Movement {
         }
 
         if self.speed.get().abs() > 0. {
-            self.position
-                .move_towards(&self.last_direction, self.speed.get());
+            self.position.move_towards(
+                &self.last_direction,
+                self.speed.get(),
+                self.speed.get_rotation(),
+            );
         }
     }
 }
