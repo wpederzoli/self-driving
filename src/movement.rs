@@ -29,11 +29,13 @@ impl Default for Movement {
 impl Movement {
     pub fn accelerate(&mut self) {
         self.speed.add(self.acceleration.get());
-        if self.direction.get() == DirectionType::Stop {
-            self.decelerate();
-        } else {
-            self.position
-                .move_towards(&self.direction.get(), self.speed.get());
+        match (self.direction.get(), self.last_direction) {
+            (DirectionType::Stop, DirectionType::Forward | DirectionType::Reverse) => {
+                self.decelerate()
+            }
+            _ => self
+                .position
+                .move_towards(&self.direction.get(), self.speed.get()),
         }
     }
 
@@ -50,6 +52,10 @@ impl Movement {
             self.last_direction = self.direction.get();
             self.direction.set(direction);
         }
+    }
+
+    pub fn get_angle(&self) -> f32 {
+        self.position.get_angle()
     }
 
     fn decelerate(&mut self) {

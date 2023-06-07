@@ -1,5 +1,5 @@
 use bevy::{
-    prelude::{default, Color, Component, Query, Transform, Vec3},
+    prelude::{default, Color, Component, Quat, Query, Transform, Vec3},
     sprite::{Sprite, SpriteBundle},
 };
 
@@ -28,4 +28,5 @@ pub fn move_car(mut car: Query<(&Car, &mut Movement, &mut Transform)>) {
     m.accelerate();
     transform.translation.x = m.get_x();
     transform.translation.y = m.get_y();
+    transform.rotation = Quat::from_rotation_z(m.get_angle());
 }
