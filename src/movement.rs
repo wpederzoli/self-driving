@@ -28,6 +28,8 @@ impl Default for Movement {
 
 impl Movement {
     pub fn accelerate(&mut self) {
+        self.speed.add(self.acceleration.get());
+
         match (self.direction.get(), self.last_direction) {
             (DirectionType::Right | DirectionType::Left, _) => self.decelerate(),
             (
@@ -40,7 +42,6 @@ impl Movement {
                 | DirectionType::ReverseRight,
             ) => self.decelerate(),
             _ => {
-                self.speed.add(self.acceleration.get());
                 self.position.move_towards(
                     &self.direction.get(),
                     self.speed.get(),
