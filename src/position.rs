@@ -56,22 +56,22 @@ impl Position {
         match direction {
             DirectionType::Forward => self.forward(speed),
             DirectionType::Reverse => self.backwards(speed),
-            DirectionType::Left => self.rotate(0.01),
-            DirectionType::Right => self.rotate(-0.01),
+            DirectionType::Left => self.rotate(0.05),
+            DirectionType::Right => self.rotate(-0.05),
             DirectionType::ForwardLeft => {
-                self.rotate(0.01);
+                self.rotate(0.05);
                 self.forward(speed);
             }
             DirectionType::ForwardRight => {
-                self.rotate(-0.01);
+                self.rotate(-0.05);
                 self.forward(speed);
             }
             DirectionType::ReverseLeft => {
-                self.rotate(-0.01);
+                self.rotate(-0.05);
                 self.backwards(speed);
             }
             DirectionType::ReverseRight => {
-                self.rotate(0.01);
+                self.rotate(0.05);
                 self.backwards(speed);
             }
             DirectionType::Stop => {
