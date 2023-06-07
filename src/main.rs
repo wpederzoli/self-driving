@@ -1,11 +1,14 @@
 use bevy::{prelude::*, window::WindowResolution};
 use car::Car;
 use controls::Controls;
-use movement::{Direction, Position};
+use movement::Movement;
 
 mod car;
 mod controls;
+mod direction;
 mod movement;
+mod position;
+mod speed;
 
 fn main() {
     App::new()
@@ -24,11 +27,5 @@ fn main() {
 
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-    commands.spawn((
-        Car,
-        Controls,
-        Position::default(),
-        Direction::default(),
-        car::draw_car(),
-    ));
+    commands.spawn((Car, Controls, Movement::default(), car::draw_car()));
 }

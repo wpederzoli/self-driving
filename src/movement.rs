@@ -1,84 +1,90 @@
+use crate::{
+    direction::{Direction, DirectionType},
+    position::Position,
+    speed::{Acceleration, Speed},
+};
 use bevy::prelude::*;
 
 #[derive(Component)]
-pub struct Position {
-    x: f32,
-    y: f32,
+pub struct Movement {
+    position: Position,
+    direction: Direction,
+    last_direction: DirectionType,
+    speed: Speed,
+    acceleration: Acceleration,
 }
 
-impl Default for Position {
+impl Default for Movement {
     fn default() -> Self {
-        Position { x: 10., y: 10. }
-    }
-}
-
-impl Position {
-    pub fn get_x(&self) -> f32 {
-        self.x
-    }
-
-    pub fn get_y(&self) -> f32 {
-        self.y
-    }
-
-    pub fn move_towards(&mut self, direction: &DirectionType) {
-        match direction {
-            DirectionType::Forward => self.y += 1.,
-            DirectionType::Reverse => self.y -= 1.,
-            DirectionType::Left => self.x -= 1.,
-            DirectionType::Right => self.x += 1.,
-            DirectionType::ForwardLeft => {
-                self.x -= 0.5;
-                self.y += 0.5;
-            }
-            DirectionType::ForwardRight => {
-                self.x += 0.5;
-                self.y += 0.5;
-            }
-            DirectionType::ReverseLeft => {
-                self.x -= 0.5;
-                self.y -= 0.5;
-            }
-            DirectionType::ReverseRight => {
-                self.x += 0.5;
-                self.y -= 0.5;
-            }
-            DirectionType::Stop => {
-                self.x = self.x;
-                self.y = self.y;
-            }
+        Movement {
+            position: Position::default(),
+            direction: Direction::default(),
+            last_direction: DirectionType::Stop,
+            speed: Speed::new(0., 3., 0.05, 0.05),
+            acceleration: Acceleration::new(0.2),
         }
     }
 }
 
-#[derive(Component)]
-pub struct Direction(DirectionType);
+impl Movement {
+    pub fn accelerate(&mut self) {
+        self.speed.add(self.acceleration.get());
 
-impl Default for Direction {
-    fn default() -> Self {
-        Direction(DirectionType::Stop)
+        match (self.direction.get(), self.last_direction) {
+            (DirectionType::Right | DirectionType::Left, _) => self.decelerate(),
+            (
+                DirectionType::Stop,
+                DirectionType::Forward
+                | DirectionType::ForwardLeft
+                | DirectionType::ForwardRight
+                | DirectionType::Reverse
+                | DirectionType::ReverseLeft
+                | DirectionType::ReverseRight,
+            ) => self.decelerate(),
+            _ => {
+                self.position.move_towards(
+                    &self.direction.get(),
+                    self.speed.get(),
+                    self.speed.get_rotation(),
+                );
+            }
+        }
     }
-}
 
-impl Direction {
-    pub fn get(&self) -> DirectionType {
-        self.0
+    pub fn get_x(&self) -> f32 {
+        self.position.get_x()
     }
 
-    pub fn set(&mut self, new_direction: DirectionType) {
-        self.0 = new_direction;
+    pub fn get_y(&self) -> f32 {
+        self.position.get_y()
     }
-}
 
-#[derive(Clone, Copy)]
-pub enum DirectionType {
-    Right,
-    Left,
-    Forward,
-    Reverse,
-    ForwardRight,
-    ForwardLeft,
-    ReverseRight,
-    ReverseLeft,
-    Stop,
+    pub fn set_direction(&mut self, direction: DirectionType) {
+        if direction != self.direction.get() {
+            self.last_direction = self.direction.get();
+            self.direction.set(direction);
+        }
+    }
+
+    pub fn get_angle(&self) -> f32 {
+        self.position.get_angle()
+    }
+
+    fn decelerate(&mut self) {
+        if self.speed.get() > 0. {
+            self.speed.add(-self.acceleration.get());
+        }
+
+        if self.speed.get() < 0. {
+            self.speed.add(self.acceleration.get());
+        }
+
+        if self.speed.get().abs() > 0. {
+            self.position.move_towards(
+                &self.last_direction,
+                self.speed.get(),
+                self.speed.get_rotation(),
+            );
+        }
+    }
 }

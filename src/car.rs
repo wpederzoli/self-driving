@@ -1,9 +1,9 @@
 use bevy::{
-    prelude::{default, Color, Component, Query, Transform, Vec3},
+    prelude::{default, Color, Component, Quat, Query, Transform, Vec3},
     sprite::{Sprite, SpriteBundle},
 };
 
-use crate::movement::{Direction, Position};
+use crate::movement::Movement;
 
 #[derive(Component)]
 pub struct Car;
@@ -23,9 +23,10 @@ pub fn draw_car() -> SpriteBundle {
     }
 }
 
-pub fn move_car(mut car: Query<(&Car, &mut Position, &Direction, &mut Transform)>) {
-    let (_, mut pos, dir, mut transform) = car.single_mut();
-    pos.move_towards(&dir.get());
-    transform.translation.x = pos.get_x();
-    transform.translation.y = pos.get_y();
+pub fn move_car(mut car: Query<(&Car, &mut Movement, &mut Transform)>) {
+    let (_, mut m, mut transform) = car.single_mut();
+    m.accelerate();
+    transform.translation.x = m.get_x();
+    transform.translation.y = m.get_y();
+    transform.rotation = Quat::from_rotation_z(m.get_angle());
 }
