@@ -20,6 +20,9 @@ impl Default for Position {
 }
 
 impl Position {
+    pub fn new(x: f32, y: f32, angle: f32) -> Self {
+        Position { x, y, angle }
+    }
     pub fn get_x(&self) -> f32 {
         self.x
     }
@@ -30,6 +33,10 @@ impl Position {
 
     pub fn get_angle(&self) -> f32 {
         self.angle
+    }
+
+    pub fn set_angle(&mut self, angle: f32) {
+        self.angle = angle;
     }
 
     fn forward(&mut self, speed: f32) {

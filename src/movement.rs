@@ -55,10 +55,6 @@ impl Movement {
         self.position.get_x()
     }
 
-    pub fn get_y(&self) -> f32 {
-        self.position.get_y()
-    }
-
     pub fn set_direction(&mut self, direction: DirectionType) {
         if direction != self.direction.get() {
             self.last_direction = self.direction.get();
@@ -76,10 +72,6 @@ impl Movement {
 
     pub fn get_direction(&self) -> DirectionType {
         self.direction.get()
-    }
-
-    pub fn get_last_direction(&self) -> DirectionType {
-        self.last_direction
     }
 
     fn decelerate(&mut self) {
