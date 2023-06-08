@@ -20,7 +20,7 @@ impl Default for Movement {
             position: Position::default(),
             direction: Direction::default(),
             last_direction: DirectionType::Stop,
-            speed: Speed::new(0., 3., 0.05, 0.05),
+            speed: Speed::new(0., 4., 0.05, 0.05),
             acceleration: Acceleration::new(0.2),
         }
     }

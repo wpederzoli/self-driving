@@ -45,10 +45,6 @@ impl Position {
 
         self.x += speed * t.up().x;
         self.y += speed * t.up().y;
-
-        if self.y > 800. {
-            self.y = 0.
-        }
     }
 
     fn backwards(&mut self, speed: f32) {
