@@ -7,6 +7,9 @@ pub struct Road {
     lanes: u32,
 }
 
+#[derive(Component)]
+pub struct Lane(pub f32);
+
 impl Road {
     pub fn new(width: u32, height: u32, lanes: u32) -> Self {
         Road {
@@ -66,23 +69,27 @@ pub fn draw_lanes(
 
     for lane in 1..lanes_count {
         for line in 0..20 {
-            commands.spawn(SpriteBundle {
-                sprite: Sprite {
-                    color: Color::ANTIQUE_WHITE,
+            let pos = -(road_height as f32 / 2.) + (line as f32 * 50.);
+            commands.spawn((
+                SpriteBundle {
+                    sprite: Sprite {
+                        color: Color::ANTIQUE_WHITE,
+                        ..default()
+                    },
+                    transform: Transform {
+                        scale: Vec3::new(line_width, line_height, 0.),
+                        translation: Vec3::new(
+                            -(road_width as f32 / 2.)
+                                + lane as f32 * road_width as f32 / lanes_count as f32,
+                            pos,
+                            1.,
+                        ),
+                        ..default()
+                    },
                     ..default()
                 },
-                transform: Transform {
-                    scale: Vec3::new(line_width, line_height, 0.),
-                    translation: Vec3::new(
-                        -(road_width as f32 / 2.)
-                            + lane as f32 * road_width as f32 / lanes_count as f32,
-                        -(road_height as f32 / 2.) + line as f32 * 50.,
-                        1.,
-                    ),
-                    ..default()
-                },
-                ..default()
-            });
+                Lane(pos),
+            ));
         }
     }
 

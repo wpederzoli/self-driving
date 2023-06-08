@@ -70,6 +70,14 @@ impl Movement {
         self.position.get_angle()
     }
 
+    pub fn get_speed(&self) -> f32 {
+        self.speed.get()
+    }
+
+    pub fn get_direction(&self) -> DirectionType {
+        self.direction.get()
+    }
+
     fn decelerate(&mut self) {
         if self.speed.get() > 0. {
             self.speed.add(-self.acceleration.get());
