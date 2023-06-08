@@ -78,6 +78,10 @@ impl Movement {
         self.direction.get()
     }
 
+    pub fn get_last_direction(&self) -> DirectionType {
+        self.last_direction
+    }
+
     fn decelerate(&mut self) {
         if self.speed.get() > 0. {
             self.speed.add(-self.acceleration.get());

@@ -46,6 +46,25 @@ pub fn move_car(
                     t.translation.y = lane.0;
                 }
             }
+            DirectionType::Stop => match m.get_last_direction() {
+                DirectionType::Forward
+                | DirectionType::ForwardRight
+                | DirectionType::ForwardLeft => {
+                    t.translation.y -= m.get_speed();
+                    if t.translation.y < lane.0 - 95. {
+                        t.translation.y = lane.0;
+                    }
+                }
+                DirectionType::Reverse
+                | DirectionType::ReverseLeft
+                | DirectionType::ReverseRight => {
+                    t.translation.y += m.get_speed();
+                    if t.translation.y > lane.0 + 50. {
+                        t.translation.y = lane.0;
+                    }
+                }
+                _ => (),
+            },
             _ => (),
         }
     }
