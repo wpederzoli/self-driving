@@ -15,7 +15,7 @@ pub fn draw_car() -> SpriteBundle {
             ..default()
         },
         transform: Transform {
-            translation: Vec3::new(10., 10., 1.),
+            translation: Vec3::new(10., 10., 2.),
             scale: Vec3::new(30., 50., 1.),
             ..default()
         },
