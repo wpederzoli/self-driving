@@ -23,7 +23,7 @@ impl Lane {
     pub fn move_lane(&mut self, direction: &DirectionType, speed: f32, angle: f32) {
         self.position.set_angle(angle);
         self.position.move_towards(&direction.inverse(), speed, 0.);
-        if self.position.get_y() > self.initial_y + 95.
+        if self.position.get_y() > self.initial_y + 50.
             || self.position.get_y() < self.initial_y - 50.
         {
             self.position = Position::new(
@@ -72,10 +72,10 @@ pub fn draw_lanes(
     });
 
     for lane in 1..lanes_count {
-        for line in 0..20 {
+        for line in 0..800 / (line_height as u32 + 50) * 2 {
             let pos = Vec3::new(
                 -(road_width as f32 / 2.) + lane as f32 * road_width as f32 / lanes_count as f32,
-                -(road_height as f32 / 2.) - 100. + (line as f32 * 50.),
+                -(road_height as f32 / 2.) + (line as f32 * 50.),
                 1.,
             );
             commands.spawn((
