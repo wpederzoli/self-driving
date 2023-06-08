@@ -3,13 +3,6 @@ use bevy::prelude::*;
 use crate::{direction::DirectionType, position::Position};
 
 #[derive(Component)]
-pub struct Road {
-    width: u32,
-    height: u32,
-    lanes: u32,
-}
-
-#[derive(Component)]
 pub struct Lane {
     position: Position,
     initial_y: f32,
@@ -42,28 +35,6 @@ impl Lane {
     }
 }
 
-impl Road {
-    pub fn new(width: u32, height: u32, lanes: u32) -> Self {
-        Road {
-            width,
-            height,
-            lanes,
-        }
-    }
-
-    pub fn get_lanes(&self) -> u32 {
-        self.lanes
-    }
-
-    pub fn get_height(&self) -> u32 {
-        self.height
-    }
-
-    pub fn get_width(&self) -> u32 {
-        self.width
-    }
-}
-
 pub fn draw_road(width: u32, height: u32) -> SpriteBundle {
     SpriteBundle {
         sprite: Sprite {
@@ -78,6 +49,7 @@ pub fn draw_road(width: u32, height: u32) -> SpriteBundle {
     }
 }
 
+//TODO: move magic numbers to constants
 pub fn draw_lanes(
     commands: &mut Commands,
     lanes_count: u32,
@@ -103,7 +75,7 @@ pub fn draw_lanes(
         for line in 0..20 {
             let pos = Vec3::new(
                 -(road_width as f32 / 2.) + lane as f32 * road_width as f32 / lanes_count as f32,
-                -(road_height as f32 / 2.) + (line as f32 * 50.),
+                -(road_height as f32 / 2.) - 100. + (line as f32 * 50.),
                 1.,
             );
             commands.spawn((

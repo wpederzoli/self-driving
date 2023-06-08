@@ -3,7 +3,7 @@ use bevy::{
     sprite::{Sprite, SpriteBundle},
 };
 
-use crate::{movement::Movement, road::Lane};
+use crate::{direction::DirectionType, movement::Movement, road::Lane};
 
 #[derive(Component)]
 pub struct Car;
@@ -33,7 +33,12 @@ pub fn move_car(
     transform.rotation = Quat::from_rotation_z(m.get_angle());
 
     for (mut t, mut lane) in lanes.iter_mut() {
-        lane.move_lane(&m.get_direction(), m.get_speed(), m.get_angle());
+        match m.get_direction() {
+            DirectionType::Stop => {
+                lane.move_lane(&m.get_last_direction(), m.get_speed(), m.get_angle())
+            }
+            _ => lane.move_lane(&m.get_direction(), m.get_speed(), m.get_angle()),
+        }
         t.translation.y = lane.get_y();
     }
 }
