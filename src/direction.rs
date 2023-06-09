@@ -31,3 +31,19 @@ pub enum DirectionType {
     ReverseLeft,
     Stop,
 }
+
+impl DirectionType {
+    pub fn inverse(&self) -> DirectionType {
+        match self {
+            DirectionType::Forward => DirectionType::Reverse,
+            DirectionType::Reverse => DirectionType::Forward,
+            DirectionType::Left => DirectionType::Right,
+            DirectionType::Right => DirectionType::Left,
+            DirectionType::ForwardLeft => DirectionType::ReverseRight,
+            DirectionType::ForwardRight => DirectionType::ReverseLeft,
+            DirectionType::ReverseLeft => DirectionType::ForwardRight,
+            DirectionType::ReverseRight => DirectionType::ForwardLeft,
+            _ => *self,
+        }
+    }
+}
