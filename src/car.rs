@@ -5,8 +5,54 @@ use bevy::{
 
 use crate::{direction::DirectionType, movement::Movement, road::Lane};
 
+const CAR_LAYER: f32 = 2.;
+const CAR_SIZE: Vec3 = Vec3::new(30., 50., 0.);
+
 #[derive(Component)]
-pub struct Car;
+pub struct Car {
+    movement: Movement,
+}
+
+impl Default for Car {
+    fn default() -> Self {
+        Car {
+            movement: Movement::default(),
+        }
+    }
+}
+
+impl Car {
+    pub fn locomote(&mut self) {
+        self.movement.accelerate();
+    }
+
+    pub fn get_transform(&self) -> Transform {
+        let mut t = Transform::from_xyz(self.movement.get_x(), self.movement.get_y(), CAR_LAYER);
+        t.scale = CAR_SIZE;
+        t.rotation = Quat::from_rotation_z(self.movement.get_angle());
+        t
+    }
+
+    pub fn get_direction(&self) -> DirectionType {
+        self.movement.get_direction()
+    }
+
+    pub fn get_last_direction(&self) -> DirectionType {
+        self.movement.get_last_direction()
+    }
+
+    pub fn get_speed(&self) -> f32 {
+        self.movement.get_speed()
+    }
+
+    pub fn get_angle(&self) -> f32 {
+        self.movement.get_angle()
+    }
+
+    pub fn set_direction(&mut self, direction: DirectionType) {
+        self.movement.set_direction(direction)
+    }
+}
 
 pub fn draw_car() -> SpriteBundle {
     SpriteBundle {
@@ -16,7 +62,7 @@ pub fn draw_car() -> SpriteBundle {
         },
         transform: Transform {
             translation: Vec3::new(10., 10., 2.),
-            scale: Vec3::new(30., 50., 1.),
+            scale: CAR_SIZE,
             ..default()
         },
         ..default()
@@ -24,20 +70,19 @@ pub fn draw_car() -> SpriteBundle {
 }
 
 pub fn move_car(
-    mut car: Query<(&Car, &mut Movement, &mut Transform)>,
+    mut car: Query<(&mut Car, &mut Transform)>,
     mut lanes: Query<(&mut Transform, &mut Lane), Without<Car>>,
 ) {
-    let (_, mut m, mut transform) = car.single_mut();
-    m.accelerate();
-    transform.translation.x = m.get_x();
-    transform.rotation = Quat::from_rotation_z(m.get_angle());
+    let (mut car, mut transform) = car.single_mut();
+    car.locomote();
+    *transform = car.get_transform();
 
     for (mut t, mut lane) in lanes.iter_mut() {
-        match m.get_direction() {
+        match car.get_direction() {
             DirectionType::Stop => {
-                lane.move_lane(&m.get_last_direction(), m.get_speed(), m.get_angle())
+                lane.move_lane(&car.get_last_direction(), car.get_speed(), car.get_angle())
             }
-            _ => lane.move_lane(&m.get_direction(), m.get_speed(), m.get_angle()),
+            _ => lane.move_lane(&car.get_direction(), car.get_speed(), car.get_angle()),
         }
         t.translation.y = lane.get_y();
     }

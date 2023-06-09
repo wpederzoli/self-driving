@@ -1,7 +1,6 @@
 use bevy::{prelude::*, window::WindowResolution};
 use car::Car;
 use controls::Controls;
-use movement::Movement;
 
 mod car;
 mod controls;
@@ -28,7 +27,7 @@ fn main() {
 
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-    commands.spawn((Car, Controls, Movement::default(), car::draw_car()));
+    commands.spawn((Car::default(), Controls, car::draw_car()));
     commands.spawn(road::draw_road());
     road::draw_lanes(&mut commands, 3, 10., 30., 50.);
 }
