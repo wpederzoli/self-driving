@@ -29,6 +29,6 @@ fn main() {
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
     commands.spawn((Car, Controls, Movement::default(), car::draw_car()));
-    commands.spawn(road::draw_road(300, 800));
-    road::draw_lanes(&mut commands, 3, 300, 800, 10., 30.);
+    commands.spawn(road::draw_road());
+    road::draw_lanes(&mut commands, 3, 10., 30., 50.);
 }

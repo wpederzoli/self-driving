@@ -2,6 +2,9 @@ use bevy::prelude::*;
 
 use crate::{direction::DirectionType, position::Position};
 
+pub const ROAD_WIDTH: f32 = 300.;
+pub const ROAD_HEIGHT: f32 = 800.;
+
 #[derive(Component)]
 pub struct Lane {
     position: Position,
@@ -35,14 +38,14 @@ impl Lane {
     }
 }
 
-pub fn draw_road(width: u32, height: u32) -> SpriteBundle {
+pub fn draw_road() -> SpriteBundle {
     SpriteBundle {
         sprite: Sprite {
             color: Color::GRAY,
             ..default()
         },
         transform: Transform {
-            scale: Vec3::new(width as f32, height as f32, 0.),
+            scale: Vec3::new(ROAD_WIDTH, ROAD_HEIGHT, 0.),
             ..default()
         },
         ..default()
@@ -53,10 +56,9 @@ pub fn draw_road(width: u32, height: u32) -> SpriteBundle {
 pub fn draw_lanes(
     commands: &mut Commands,
     lanes_count: u32,
-    road_width: u32,
-    road_height: u32,
     line_width: f32,
     line_height: f32,
+    line_space: f32,
 ) {
     commands.spawn(SpriteBundle {
         sprite: Sprite {
@@ -64,18 +66,18 @@ pub fn draw_lanes(
             ..default()
         },
         transform: Transform {
-            scale: Vec3::new(line_width as f32, road_height as f32, 0.),
-            translation: Vec3::new(-(road_width as f32 / 2.), 0., 1.),
+            scale: Vec3::new(line_width as f32, ROAD_HEIGHT, 0.),
+            translation: Vec3::new(-(ROAD_WIDTH / 2.), 0., 1.),
             ..default()
         },
         ..default()
     });
 
     for lane in 1..lanes_count {
-        for line in 0..800 / (line_height as u32 + 50) * 2 {
+        for line in 0..800 / (line_height as u32 + line_space as u32) * 2 {
             let pos = Vec3::new(
-                -(road_width as f32 / 2.) + lane as f32 * road_width as f32 / lanes_count as f32,
-                -(road_height as f32 / 2.) + (line as f32 * 50.),
+                -(ROAD_WIDTH / 2.) + lane as f32 * ROAD_WIDTH / lanes_count as f32,
+                -(ROAD_HEIGHT / 2.) + (line as f32 * line_space),
                 1.,
             );
             commands.spawn((
@@ -102,8 +104,8 @@ pub fn draw_lanes(
             ..default()
         },
         transform: Transform {
-            scale: Vec3::new(line_width as f32, road_height as f32, 0.),
-            translation: Vec3::new(road_width as f32 / 2., 0., 1.),
+            scale: Vec3::new(line_width as f32, ROAD_HEIGHT, 0.),
+            translation: Vec3::new(ROAD_WIDTH / 2., 0., 1.),
             ..default()
         },
         ..default()
