@@ -1,7 +1,6 @@
 use bevy::{
     prelude::{
-        default, Color, Commands, Component, Entity, NextState, Quat, Query, ResMut, Transform,
-        Vec2, Vec3, Without,
+        default, Color, Component, NextState, Quat, Query, ResMut, Transform, Vec3, Without,
     },
     sprite::{Sprite, SpriteBundle},
 };

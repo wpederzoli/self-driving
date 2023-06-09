@@ -40,12 +40,6 @@ impl Collider {
     }
 }
 
-pub fn draw_colliders(mut col: Query<(&Collider, &mut Sprite)>) {
-    for (_, mut t) in col.iter_mut() {
-        t.color = Color::GREEN;
-    }
-}
-
 #[derive(Clone, Copy)]
 pub enum CollisionType {
     None,

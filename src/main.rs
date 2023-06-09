@@ -1,6 +1,5 @@
 use bevy::{prelude::*, window::WindowResolution};
-use collision::{draw_colliders, Collider, CollisionType};
-use road::{ROAD_HEIGHT, ROAD_WIDTH};
+use collision::{Collider, CollisionType};
 
 mod car;
 mod collision;
