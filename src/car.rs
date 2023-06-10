@@ -69,11 +69,6 @@ impl Car {
     pub fn set_direction(&mut self, direction: DirectionType) {
         self.movement.set_direction(direction)
     }
-
-    pub fn set_position(&mut self, position: Vec3) {
-        self.movement
-            .set_position(position.x, position.y, position.z);
-    }
 }
 
 pub fn init_car() -> (Car, Controls, Collider, SpriteBundle) {
@@ -112,16 +107,6 @@ pub fn move_car(
     for other_colliders in colliders.iter() {
         collider.check_collision(other_colliders);
         match collider.get_collision() {
-            CollisionType::TopBound => {
-                let car_x = car.get_position().x.clone();
-                let car_angle = car.get_angle().clone();
-                car.set_position(Vec3::new(car_x, CAR_TOP_DOWN_BOUND, car_angle));
-            }
-            CollisionType::BottomBound => {
-                let car_x = car.get_position().x.clone();
-                let car_angle = car.get_angle().clone();
-                car.set_position(Vec3::new(car_x, -CAR_TOP_DOWN_BOUND, car_angle));
-            }
             CollisionType::LeftBorder => next_state.set(GameState::GameOver),
             CollisionType::RightBorder => next_state.set(GameState::GameOver),
             _ => (),

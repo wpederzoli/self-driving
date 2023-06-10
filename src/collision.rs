@@ -44,8 +44,6 @@ impl Collider {
 pub enum CollisionType {
     None,
     Car,
-    TopBound,
-    BottomBound,
     LeftBorder,
     RightBorder,
 }
