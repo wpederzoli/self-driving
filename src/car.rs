@@ -17,6 +17,7 @@ use crate::{
 const CAR_LAYER: f32 = 2.;
 const CAR_TOP_DOWN_BOUND: f32 = 300.;
 const CAR_SIZE: Vec3 = Vec3::new(30., 50., 0.);
+const CAR_Y: f32 = -150.;
 
 #[derive(Component)]
 pub struct Car {
@@ -35,7 +36,7 @@ impl Car {
     pub fn locomote(&mut self) {
         self.movement.accelerate();
         self.movement
-            .set_position(self.movement.get_x(), 0., self.movement.get_angle());
+            .set_position(self.movement.get_x(), CAR_Y, self.movement.get_angle());
     }
 
     pub fn get_transform(&self) -> Transform {
@@ -75,30 +76,26 @@ impl Car {
     }
 }
 
-pub fn draw_car() -> SpriteBundle {
-    SpriteBundle {
-        sprite: Sprite {
-            color: Color::RED,
-            ..default()
-        },
-        transform: Transform {
-            translation: Vec3::new(0., 0., 2.),
-            scale: CAR_SIZE,
-            ..default()
-        },
-        ..default()
-    }
-}
-
-pub fn init_car() -> (Car, Controls, SpriteBundle, Collider) {
+pub fn init_car() -> (Car, Controls, Collider, SpriteBundle) {
     (
         Car::default(),
         Controls,
-        draw_car(),
         Collider::new(
             Transform::from_xyz(0., 0., 2.).with_scale(CAR_SIZE),
             CollisionType::Car,
         ),
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::RED,
+                ..default()
+            },
+            transform: Transform {
+                translation: Vec3::new(0., CAR_Y, 2.),
+                scale: CAR_SIZE,
+                ..default()
+            },
+            ..default()
+        },
     )
 }
 
