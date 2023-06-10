@@ -12,8 +12,8 @@ pub struct Position {
 impl Default for Position {
     fn default() -> Self {
         Position {
-            x: 10.,
-            y: 10.,
+            x: 0.,
+            y: 0.,
             angle: 0.,
         }
     }
