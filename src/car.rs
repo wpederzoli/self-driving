@@ -15,7 +15,6 @@ use crate::{
 };
 
 const CAR_LAYER: f32 = 2.;
-const CAR_TOP_DOWN_BOUND: f32 = 300.;
 const CAR_SIZE: Vec3 = Vec3::new(30., 50., 0.);
 const CAR_Y: f32 = -150.;
 
@@ -44,10 +43,6 @@ impl Car {
         t.scale = CAR_SIZE;
         t.rotation = Quat::from_rotation_z(self.movement.get_angle());
         t
-    }
-
-    pub fn get_position(&self) -> Vec3 {
-        self.get_transform().translation
     }
 
     pub fn get_direction(&self) -> DirectionType {
@@ -114,16 +109,11 @@ pub fn move_car(
     }
 
     for (mut t, mut lane) in lanes.iter_mut() {
-        let lane_speed = match car.get_position().y {
-            y if y == CAR_TOP_DOWN_BOUND || y == -CAR_TOP_DOWN_BOUND => car.get_speed() * 2.,
-            _ => car.get_speed(),
-        };
-
         match car.get_direction() {
             DirectionType::Stop => {
-                lane.move_lane(&car.get_last_direction(), lane_speed, car.get_angle())
+                lane.move_lane(&car.get_last_direction(), car.get_speed(), car.get_angle())
             }
-            _ => lane.move_lane(&car.get_direction(), lane_speed, car.get_angle()),
+            _ => lane.move_lane(&car.get_direction(), car.get_speed(), car.get_angle()),
         }
         t.translation.y = lane.get_y();
     }
