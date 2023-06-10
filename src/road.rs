@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
+    car::Car,
     collision::{Collider, CollisionType},
     direction::DirectionType,
     position::Position,
@@ -27,7 +28,20 @@ impl Lane {
         self.position.get_y()
     }
 
-    pub fn move_lane(&mut self, direction: &DirectionType, speed: f32, angle: f32) {
+    pub fn locomote(&mut self, car: &Car) {
+        match (car.get_direction(), car.get_last_direction()) {
+            (DirectionType::Left | DirectionType::Right, DirectionType::Stop) => (),
+            (DirectionType::Left | DirectionType::Right, _) => {
+                self.move_lane(&car.get_last_direction(), car.get_speed(), car.get_angle())
+            }
+            (DirectionType::Stop, _) => {
+                self.move_lane(&car.get_last_direction(), car.get_speed(), car.get_angle())
+            }
+            _ => self.move_lane(&car.get_direction(), car.get_speed(), car.get_angle()),
+        }
+    }
+
+    fn move_lane(&mut self, direction: &DirectionType, speed: f32, angle: f32) {
         self.position.set_angle(angle);
         self.position.move_towards(&direction.inverse(), speed, 0.);
         if self.position.get_y() > self.initial_y + 50.

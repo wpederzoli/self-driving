@@ -99,6 +99,7 @@ pub fn move_car(
     car.locomote();
     *transform = car.get_transform();
     collider.set_transform(car.get_transform());
+
     for other_colliders in colliders.iter() {
         collider.check_collision(other_colliders);
         match collider.get_collision() {
@@ -109,12 +110,7 @@ pub fn move_car(
     }
 
     for (mut t, mut lane) in lanes.iter_mut() {
-        match car.get_direction() {
-            DirectionType::Stop => {
-                lane.move_lane(&car.get_last_direction(), car.get_speed(), car.get_angle())
-            }
-            _ => lane.move_lane(&car.get_direction(), car.get_speed(), car.get_angle()),
-        }
+        lane.locomote(&car);
         t.translation.y = lane.get_y();
     }
 }
