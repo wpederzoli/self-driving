@@ -1,5 +1,4 @@
 use bevy::{prelude::*, window::WindowResolution};
-use collision::{Collider, CollisionType};
 
 mod car;
 mod collision;
@@ -40,13 +39,5 @@ fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
     commands.spawn(car::init_car());
     commands.spawn(road::draw_road());
-    commands.spawn(Collider::new(
-        Transform::from_xyz(0., 400., 4.).with_scale(Vec3::new(800., 150., 0.)),
-        CollisionType::TopBound,
-    ));
-    commands.spawn(Collider::new(
-        Transform::from_xyz(0., -400., 4.).with_scale(Vec3::new(800., 150., 0.)),
-        CollisionType::BottomBound,
-    ));
     road::draw_lanes(&mut commands, 3, 10., 30., 50.);
 }
