@@ -34,6 +34,8 @@ impl Default for Car {
 impl Car {
     pub fn locomote(&mut self) {
         self.movement.accelerate();
+        self.movement
+            .set_position(self.movement.get_x(), 0., self.movement.get_angle());
     }
 
     pub fn get_transform(&self) -> Transform {
