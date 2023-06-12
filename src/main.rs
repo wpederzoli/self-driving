@@ -37,8 +37,8 @@ fn main() {
         .add_startup_system(setup)
         .add_systems((
             controls_system.run_if(in_state(GameState::Play)),
-            move_car,
-            move_road,
+            move_car.run_if(in_state(GameState::Play)),
+            move_road.run_if(in_state(GameState::Play)),
         ))
         .add_system(bevy::window::close_on_esc)
         .run();

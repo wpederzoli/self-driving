@@ -86,7 +86,7 @@ pub fn move_road(mut road: Query<(&Road, &mut Transform)>, car: Query<(&Car, &Mo
     let (_, movement) = car.single();
 
     for (_, mut transform) in road.iter_mut() {
-        if transform.translation.y <= -800. || transform.translation.y >= 800. {
+        if transform.translation.y <= -ROAD_HEIGHT || transform.translation.y >= ROAD_HEIGHT {
             transform.translation.y = 0.;
         }
 
