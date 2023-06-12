@@ -42,7 +42,7 @@ pub const ROAD_WIDTH: f32 = 300.;
 pub const ROAD_HEIGHT: f32 = 800.;
 const ROAD_LAYER: f32 = 0.;
 
-pub fn spawn_road(commands: &mut Commands, lane_count: u32) {
+pub fn spawn_road(commands: &mut Commands, lane_count: u32, y_pos: f32) {
     commands
         .spawn((
             Road,
@@ -60,47 +60,60 @@ pub fn spawn_road(commands: &mut Commands, lane_count: u32) {
                     color: Color::GRAY,
                     ..default()
                 },
-                transform: Transform::from_xyz(0., 0., ROAD_LAYER).with_scale(Vec3::new(
+                transform: Transform::from_xyz(0., y_pos, ROAD_LAYER).with_scale(Vec3::new(
                     ROAD_WIDTH,
                     ROAD_HEIGHT,
                     1.,
                 )),
                 ..default()
             });
-            parent.spawn(Border::new(-ROAD_WIDTH / 2., 0., CollisionType::LeftBorder));
-            parent.spawn(Border::new(ROAD_WIDTH / 2., 0., CollisionType::RightBorder));
+            parent.spawn(Border::new(
+                -ROAD_WIDTH / 2.,
+                y_pos,
+                CollisionType::LeftBorder,
+            ));
+            parent.spawn(Border::new(
+                ROAD_WIDTH / 2.,
+                y_pos,
+                CollisionType::RightBorder,
+            ));
 
-            lanes::spawn_lanes(parent, lane_count);
+            lanes::spawn_lanes(parent, lane_count, y_pos);
         });
 }
 
 pub fn move_road(mut road: Query<(&Road, &mut Transform)>, car: Query<(&Car, &Movement)>) {
-    let (_, mut transform) = road.single_mut();
     let (_, movement) = car.single();
 
-    if movement.get_speed() > 0. {
-        let mut t = Transform::from(transform.clone());
-        t.rotation = Quat::from_rotation_z(movement.get_angle());
-        match movement.get_direction() {
-            DirectionType::Forward | DirectionType::ForwardRight | DirectionType::ForwardLeft => {
-                transform.translation.y += t.down().y * movement.get_speed();
-            }
-            DirectionType::Reverse | DirectionType::ReverseLeft | DirectionType::ReverseRight => {
-                transform.translation.y += t.up().y * movement.get_speed();
-            }
-            DirectionType::Stop | DirectionType::Left | DirectionType::Right => {
-                match movement.get_last_direction() {
-                    DirectionType::Forward
-                    | DirectionType::ForwardRight
-                    | DirectionType::ForwardLeft => {
-                        transform.translation.y += t.down().y * movement.get_speed();
+    for (_, mut transform) in road.iter_mut() {
+        if movement.get_speed() > 0. {
+            let mut t = Transform::from(transform.clone());
+            t.rotation = Quat::from_rotation_z(movement.get_angle());
+            match movement.get_direction() {
+                DirectionType::Forward
+                | DirectionType::ForwardRight
+                | DirectionType::ForwardLeft => {
+                    transform.translation.y += t.down().y * movement.get_speed();
+                }
+                DirectionType::Reverse
+                | DirectionType::ReverseLeft
+                | DirectionType::ReverseRight => {
+                    transform.translation.y += t.up().y * movement.get_speed();
+                }
+                DirectionType::Stop | DirectionType::Left | DirectionType::Right => {
+                    match movement.get_last_direction() {
+                        DirectionType::Forward
+                        | DirectionType::ForwardRight
+                        | DirectionType::ForwardLeft => {
+                            transform.translation.y += t.down().y * movement.get_speed();
+                        }
+                        DirectionType::Reverse
+                        | DirectionType::ReverseLeft
+                        | DirectionType::ReverseRight => {
+                            transform.translation.y += t.up().y * movement.get_speed();
+                        }
+                        _ => (),
                     }
-                    DirectionType::Reverse
-                    | DirectionType::ReverseLeft
-                    | DirectionType::ReverseRight => {
-                        transform.translation.y += t.up().y * movement.get_speed();
-                    }
-                    _ => (),
                 }
             }
         }

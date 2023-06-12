@@ -1,7 +1,7 @@
 use bevy::{prelude::*, window::WindowResolution};
 use car::move_car;
 use controls::controls_system;
-use road::move_road;
+use road::{move_road, ROAD_HEIGHT};
 
 mod car;
 mod collision;
@@ -47,5 +47,7 @@ fn main() {
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
     car::spawn_player(&mut commands);
-    road::spawn_road(&mut commands, 3);
+    road::spawn_road(&mut commands, 3, 0.);
+    road::spawn_road(&mut commands, 3, ROAD_HEIGHT);
+    road::spawn_road(&mut commands, 3, -ROAD_HEIGHT);
 }
