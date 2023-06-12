@@ -1,6 +1,6 @@
 use bevy::{
     prelude::{
-        default, Bundle, Color, Component, NextState, Quat, Query, ResMut, Transform, Vec3, Without,
+        default, BuildChildren, Bundle, Color, Commands, Component, Quat, Query, Transform, Vec3,
     },
     sprite::{Sprite, SpriteBundle},
 };
@@ -8,11 +8,8 @@ use bevy::{
 use crate::{
     collision::{Collider, CollisionType},
     controls::Controls,
-    direction::DirectionType,
     movement::Movement,
-    sensor::{Sensor, SensorBundle},
-    // movement::Movement,
-    GameState,
+    sensor::SensorBundle,
 };
 
 const CAR_LAYER: f32 = 2.;
@@ -21,77 +18,6 @@ const CAR_Y: f32 = -150.;
 
 #[derive(Component)]
 pub struct Car;
-
-// #[derive(Component)]
-// pub struct Car {
-//     movement: Movement,
-// }
-//
-// impl Default for Car {
-//     fn default() -> Self {
-//         Car {
-//             movement: Movement::default(),
-//         }
-//     }
-// }
-
-// impl Car {
-//     pub fn locomote(&mut self) {
-//         self.movement.accelerate();
-//         self.movement
-//             .set_position(self.movement.get_x(), CAR_Y, self.movement.get_angle());
-//     }
-//
-//     pub fn get_transform(&self) -> Transform {
-//         let mut t = Transform::from_xyz(self.movement.get_x(), self.movement.get_y(), CAR_LAYER);
-//         t.scale = CAR_SIZE;
-//         t.rotation = Quat::from_rotation_z(self.movement.get_angle());
-//         t
-//     }
-//
-//     pub fn get_direction(&self) -> DirectionType {
-//         self.movement.get_direction()
-//     }
-//
-//     pub fn get_last_direction(&self) -> DirectionType {
-//         self.movement.get_last_direction()
-//     }
-//
-//     pub fn get_speed(&self) -> f32 {
-//         self.movement.get_speed()
-//     }
-//
-//     pub fn get_angle(&self) -> f32 {
-//         self.movement.get_angle()
-//     }
-//
-//     pub fn set_direction(&mut self, direction: DirectionType) {
-//         self.movement.set_direction(direction)
-//     }
-// }
-
-// pub fn init_car() -> (Car, Controls, Collider, SpriteBundle) {
-//     (
-//         Car::default(),
-//         Controls,
-//         Collider::new(
-//             Transform::from_xyz(0., 0., 2.).with_scale(CAR_SIZE),
-//             CollisionType::Car,
-//         ),
-//         SpriteBundle {
-//             sprite: Sprite {
-//                 color: Color::RED,
-//                 ..default()
-//             },
-//             transform: Transform {
-//                 translation: Vec3::new(0., CAR_Y, 2.),
-//                 scale: CAR_SIZE,
-//                 ..default()
-//             },
-//             ..default()
-//         },
-//     )
-// }
 
 #[derive(Bundle)]
 pub struct PlayerCar {
@@ -118,7 +44,7 @@ impl Default for PlayerCar {
                     ..default()
                 },
                 transform: Transform {
-                    translation: Vec3::new(0., CAR_Y, 2.),
+                    translation: Vec3::new(0., CAR_Y, CAR_LAYER),
                     scale: CAR_SIZE,
                     ..default()
                 },
@@ -126,6 +52,14 @@ impl Default for PlayerCar {
             },
         }
     }
+}
+
+pub fn spawn_player(commands: &mut Commands) {
+    commands
+        .spawn(PlayerCar::default())
+        .with_children(|parent| {
+            parent.spawn(SensorBundle::new());
+        });
 }
 
 pub fn move_car(mut car: Query<(&Car, &mut Movement, &mut Transform)>) {
