@@ -86,6 +86,10 @@ pub fn move_road(mut road: Query<(&Road, &mut Transform)>, car: Query<(&Car, &Mo
     let (_, movement) = car.single();
 
     for (_, mut transform) in road.iter_mut() {
+        if transform.translation.y <= -800. || transform.translation.y >= 800. {
+            transform.translation.y = 0.;
+        }
+
         if movement.get_speed() > 0. {
             let mut t = Transform::from(transform.clone());
             t.rotation = Quat::from_rotation_z(movement.get_angle());

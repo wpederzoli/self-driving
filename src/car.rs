@@ -1,7 +1,6 @@
 use bevy::{
     prelude::{
         default, BuildChildren, Bundle, Color, Commands, Component, Quat, Query, Transform, Vec3,
-        Without,
     },
     sprite::{Sprite, SpriteBundle},
 };
@@ -10,7 +9,6 @@ use crate::{
     collision::{Collider, CollisionType},
     controls::Controls,
     movement::Movement,
-    road::Road,
     sensor::SensorBundle,
 };
 
@@ -71,29 +69,3 @@ pub fn move_car(mut car: Query<(&Car, &mut Movement, &mut Transform)>) {
     transform.translation.x = movement.get_x();
     transform.rotation = Quat::from_rotation_z(movement.get_angle());
 }
-
-// pub fn move_car(
-//     mut car: Query<(&mut Car, &mut Transform, &mut Collider)>,
-//     mut lanes: Query<(&mut Transform, &mut Lane), Without<Car>>,
-//     colliders: Query<&Collider, Without<Car>>,
-//     mut next_state: ResMut<NextState<GameState>>,
-// ) {
-//     let (mut car, mut transform, mut collider) = car.single_mut();
-//     car.locomote();
-//     *transform = car.get_transform();
-//     collider.set_transform(car.get_transform());
-//
-//     for other_colliders in colliders.iter() {
-//         collider.check_collision(other_colliders);
-//         match collider.get_collision() {
-//             CollisionType::LeftBorder => next_state.set(GameState::GameOver),
-//             CollisionType::RightBorder => next_state.set(GameState::GameOver),
-//             _ => (),
-//         }
-//     }
-//
-//     for (mut t, mut lane) in lanes.iter_mut() {
-//         lane.locomote(&car);
-//         t.translation.y = lane.get_y();
-//     }
-// }
