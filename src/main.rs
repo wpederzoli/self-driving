@@ -80,16 +80,17 @@ fn setup(mut commands: Commands) {
             parent.spawn(Border::new(-ROAD_WIDTH / 2., 0., CollisionType::LeftBorder));
             parent.spawn(Border::new(ROAD_WIDTH / 2., 0., CollisionType::RightBorder));
 
+            let lines_count = 10;
             let lane_count = 3;
             let line_width = 8.;
-            let line_height = 20.;
-            let line_space = 10.;
+            let line_height = 35.;
+            let line_space = 15.;
 
             for lane in 0..lane_count {
-                for line in 0..(ROAD_HEIGHT / line_height + line_space) as u32 {
+                for line in 0..(ROAD_HEIGHT / (line_height + line_space)) as u32 + 1 {
                     let pos = Vec3::new(
                         lane as f32 * (ROAD_WIDTH / lane_count as f32) - ROAD_WIDTH / 2.,
-                        (-ROAD_HEIGHT / 2.) + line as f32 * line_space,
+                        (line as f32 * (line_space + line_height)) - ROAD_HEIGHT / 2.,
                         1.,
                     );
                     parent.spawn(SpriteBundle {
