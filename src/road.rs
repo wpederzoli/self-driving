@@ -1,8 +1,11 @@
 use bevy::prelude::*;
 
 use crate::{
+    car::Car,
     collision::{Collider, CollisionType},
+    direction::DirectionType,
     lanes,
+    movement::Movement,
 };
 
 const LINES_LAYER: f32 = 1.;
@@ -69,4 +72,23 @@ pub fn spawn_road(commands: &mut Commands, lane_count: u32) {
 
             lanes::spawn_lanes(parent, lane_count);
         });
+}
+
+pub fn move_road(mut road: Query<(&Road, &mut Transform)>, car: Query<(&Car, &Movement)>) {
+    let (_, mut transform) = road.single_mut();
+    let (_, movement) = car.single();
+
+    if movement.get_speed() > 0. {
+        let mut t = Transform::from(transform.clone());
+        t.rotation = Quat::from_rotation_z(movement.get_angle());
+        match movement.get_direction() {
+            DirectionType::Forward | DirectionType::ForwardRight | DirectionType::ForwardLeft => {
+                transform.translation.y += t.down().y * movement.get_speed();
+            }
+            DirectionType::Reverse | DirectionType::ReverseLeft | DirectionType::ReverseRight => {
+                transform.translation.y += t.up().y * movement.get_speed();
+            }
+            _ => (),
+        }
+    }
 }

@@ -7,7 +7,7 @@ const LINE_WIDTH: f32 = 8.;
 const LINE_SPACE: f32 = 15.;
 
 pub fn spawn_lanes(parent: &mut ChildBuilder, lane_count: u32) {
-    for lane in 0..lane_count {
+    for lane in 1..lane_count {
         for line in 0..(ROAD_HEIGHT / (LINE_HEIGHT + LINE_SPACE)) as u32 + 1 {
             let pos = Vec3::new(
                 lane as f32 * (ROAD_WIDTH / lane_count as f32) - ROAD_WIDTH / 2.,

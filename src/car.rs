@@ -1,6 +1,7 @@
 use bevy::{
     prelude::{
         default, BuildChildren, Bundle, Color, Commands, Component, Quat, Query, Transform, Vec3,
+        Without,
     },
     sprite::{Sprite, SpriteBundle},
 };
@@ -9,6 +10,7 @@ use crate::{
     collision::{Collider, CollisionType},
     controls::Controls,
     movement::Movement,
+    road::Road,
     sensor::SensorBundle,
 };
 
@@ -66,7 +68,7 @@ pub fn move_car(mut car: Query<(&Car, &mut Movement, &mut Transform)>) {
     let (_, mut movement, mut transform) = car.single_mut();
 
     movement.accelerate();
-    transform.translation = Vec3::new(movement.get_x(), movement.get_y(), CAR_LAYER);
+    transform.translation.x = movement.get_x();
     transform.rotation = Quat::from_rotation_z(movement.get_angle());
 }
 
