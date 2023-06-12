@@ -88,7 +88,21 @@ pub fn move_road(mut road: Query<(&Road, &mut Transform)>, car: Query<(&Car, &Mo
             DirectionType::Reverse | DirectionType::ReverseLeft | DirectionType::ReverseRight => {
                 transform.translation.y += t.up().y * movement.get_speed();
             }
-            _ => (),
+            DirectionType::Stop | DirectionType::Left | DirectionType::Right => {
+                match movement.get_last_direction() {
+                    DirectionType::Forward
+                    | DirectionType::ForwardRight
+                    | DirectionType::ForwardLeft => {
+                        transform.translation.y += t.down().y * movement.get_speed();
+                    }
+                    DirectionType::Reverse
+                    | DirectionType::ReverseLeft
+                    | DirectionType::ReverseRight => {
+                        transform.translation.y += t.up().y * movement.get_speed();
+                    }
+                    _ => (),
+                }
+            }
         }
     }
 }
