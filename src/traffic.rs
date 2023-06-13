@@ -1,8 +1,10 @@
 use bevy::prelude::*;
 
 use crate::{
-    car::{Car, CAR_SIZE},
+    car::{Car, CAR_LAYER, CAR_SIZE},
     collision::{Collider, CollisionType},
+    controls::Controls,
+    direction::DirectionType,
     movement::Movement,
 };
 
@@ -10,7 +12,7 @@ pub struct TrafficPlugin;
 
 impl Plugin for TrafficPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup);
+        app.add_startup_system(setup).add_system(move_car);
     }
 }
 
@@ -30,6 +32,25 @@ fn setup(mut commands: Commands) {
         collider: Collider::new(transform, CollisionType::Car),
         movement: Movement::default(),
     });
+}
+
+fn move_car(
+    mut car: Query<(&Car, &mut Movement, &mut Transform, &mut Collider), Without<Controls>>,
+    player: Query<&Movement, With<Controls>>,
+) {
+    let player = player.single();
+    for (_, mut movement, mut transform, mut collider) in car.iter_mut() {
+        movement.set_speed(2.5, 3.0);
+        movement.set_direction(DirectionType::Forward);
+        movement.accelerate();
+        let t = Vec3::new(
+            movement.get_x(),
+            movement.get_y() - player.get_y(),
+            CAR_LAYER,
+        );
+        transform.translation = t;
+        collider.set_transform(*transform);
+    }
 }
 
 #[derive(Bundle)]

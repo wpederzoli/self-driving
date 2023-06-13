@@ -63,6 +63,10 @@ impl Movement {
         self.position = Position::new(x, y, angle)
     }
 
+    pub fn set_speed(&mut self, speed: f32, max: f32) {
+        self.speed = Speed::new(speed, max, 0.05, 0.05);
+    }
+
     pub fn set_direction(&mut self, direction: DirectionType) {
         if direction != self.direction.get() {
             self.last_direction = self.direction.get();
