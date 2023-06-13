@@ -27,7 +27,7 @@ impl SensorBundle {
                 transform,
                 ..default()
             },
-            collider: Collider::new(transform, CollisionType::Sensor),
+            collider: Collider::new(transform, CollisionType::None),
         }
     }
 }

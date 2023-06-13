@@ -38,7 +38,7 @@ impl Default for PlayerCar {
             car: Car,
             controls: Controls,
             movement: Movement::default(),
-            collider: Collider::new(transform, CollisionType::Player),
+            collider: Collider::new(transform, CollisionType::None),
             sprite: SpriteBundle {
                 sprite: Sprite {
                     color: Color::RED,
