@@ -27,6 +27,7 @@ pub struct PlayerCar {
     controls: Controls,
     movement: Movement,
     collider: Collider,
+    #[bundle]
     sprite: SpriteBundle,
 }
 
