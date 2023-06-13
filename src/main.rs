@@ -4,6 +4,7 @@ use collision::draw_colliders;
 use controls::controls_system;
 use road::{move_road, ROAD_HEIGHT};
 use sensor::sensors_collision;
+use traffic::TrafficPlugin;
 
 mod car;
 mod collision;
@@ -15,6 +16,7 @@ mod position;
 mod road;
 mod sensor;
 mod speed;
+mod traffic;
 
 const SCREEN_WIDTH: f32 = 400.;
 const SCREEN_HEIGHT: f32 = 800.;
@@ -35,6 +37,7 @@ fn main() {
             }),
             ..default()
         }))
+        .add_plugin(TrafficPlugin)
         .add_state::<GameState>()
         .add_startup_system(setup)
         .add_systems((

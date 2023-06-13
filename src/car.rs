@@ -14,8 +14,8 @@ use crate::{
     GameState,
 };
 
-const CAR_LAYER: f32 = 2.;
-const CAR_SIZE: Vec3 = Vec3::new(30., 50., 0.);
+pub const CAR_LAYER: f32 = 2.;
+pub const CAR_SIZE: Vec3 = Vec3::new(30., 50., 0.);
 const CAR_Y: f32 = -150.;
 
 #[derive(Component)]
@@ -71,8 +71,8 @@ pub fn spawn_player(commands: &mut Commands) {
 }
 
 pub fn move_car(
-    mut car: Query<(&mut Sprite, &mut Movement, &mut Transform, &mut Collider), With<Car>>,
-    colliders: Query<&Collider, Without<Car>>,
+    mut car: Query<(&mut Sprite, &mut Movement, &mut Transform, &mut Collider), With<Controls>>,
+    colliders: Query<&Collider, Without<Controls>>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
     let (mut sprite, mut movement, mut transform, mut car_collider) = car.single_mut();

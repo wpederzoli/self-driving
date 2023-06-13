@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use crate::{
     car::Car,
     collision::{Collider, CollisionType},
+    controls::Controls,
     direction::DirectionType,
     lanes,
     movement::Movement,
@@ -82,7 +83,10 @@ pub fn spawn_road(commands: &mut Commands, lane_count: u32, y_pos: f32) {
         });
 }
 
-pub fn move_road(mut road: Query<(&Road, &mut Transform)>, car: Query<(&Car, &Movement)>) {
+pub fn move_road(
+    mut road: Query<(&Road, &mut Transform)>,
+    car: Query<(&Car, &Movement), With<Controls>>,
+) {
     let (_, movement) = car.single();
 
     for (_, mut transform) in road.iter_mut() {
