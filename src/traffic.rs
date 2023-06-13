@@ -19,20 +19,20 @@ impl Plugin for TrafficPlugin {
 }
 
 fn setup(mut commands: Commands) {
-    let transform = Transform::from_xyz(0., 0., CAR_LAYER).with_scale(CAR_SIZE);
+    let transform = Transform::from_xyz(100., 120., CAR_LAYER).with_scale(CAR_SIZE);
 
     commands.spawn(TrafficCar {
         car: Car,
         sprite: SpriteBundle {
             sprite: Sprite {
-                color: Color::BLACK,
+                color: Color::BLUE,
                 ..default()
             },
             transform,
             ..default()
         },
         collider: Collider::new(transform, CollisionType::Car),
-        movement: Movement::default(),
+        movement: Movement::new(transform.translation.x, transform.translation.x, 0.0),
     });
 }
 
