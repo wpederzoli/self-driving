@@ -1,7 +1,7 @@
 use bevy::{
     prelude::{
         default, BuildChildren, Bundle, Color, Commands, Component, NextState, Quat, Query, ResMut,
-        Transform, Vec3, Without,
+        Transform, Vec3, With, Without,
     },
     sprite::{Sprite, SpriteBundle},
 };
@@ -71,11 +71,11 @@ pub fn spawn_player(commands: &mut Commands) {
 }
 
 pub fn move_car(
-    mut car: Query<(&Car, &mut Movement, &mut Transform, &mut Collider)>,
+    mut car: Query<(&mut Sprite, &mut Movement, &mut Transform, &mut Collider), With<Car>>,
     colliders: Query<&Collider, Without<Car>>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
-    let (_, mut movement, mut transform, mut car_collider) = car.single_mut();
+    let (mut sprite, mut movement, mut transform, mut car_collider) = car.single_mut();
 
     movement.accelerate();
     transform.translation.x = movement.get_x();
@@ -86,6 +86,7 @@ pub fn move_car(
         car_collider.check_collision(&other_collider);
         match car_collider.get_collision() {
             CollisionType::LeftBorder | CollisionType::RightBorder => {
+                sprite.color = Color::RED.with_a(0.5);
                 next_state.set(GameState::GameOver);
             }
             _ => (),
