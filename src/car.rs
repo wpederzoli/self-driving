@@ -1,6 +1,7 @@
 use bevy::{
     prelude::{
-        default, Color, Component, NextState, Quat, Query, ResMut, Transform, Vec3, Without,
+        default, BuildChildren, Bundle, Color, Commands, Component, NextState, Quat, Query, ResMut,
+        Transform, Vec3, Without,
     },
     sprite::{Sprite, SpriteBundle},
 };
@@ -8,9 +9,8 @@ use bevy::{
 use crate::{
     collision::{Collider, CollisionType},
     controls::Controls,
-    direction::DirectionType,
     movement::Movement,
-    road::Lane,
+    sensor::SensorBundle,
     GameState,
 };
 
@@ -19,98 +19,76 @@ const CAR_SIZE: Vec3 = Vec3::new(30., 50., 0.);
 const CAR_Y: f32 = -150.;
 
 #[derive(Component)]
-pub struct Car {
+pub struct Car;
+
+#[derive(Bundle)]
+pub struct PlayerCar {
+    car: Car,
+    controls: Controls,
     movement: Movement,
+    collider: Collider,
+    #[bundle]
+    sprite: SpriteBundle,
 }
 
-impl Default for Car {
+impl Default for PlayerCar {
     fn default() -> Self {
-        Car {
+        let transform = Transform::from_xyz(0., CAR_Y, CAR_LAYER).with_scale(CAR_SIZE);
+        PlayerCar {
+            car: Car,
+            controls: Controls,
             movement: Movement::default(),
+            collider: Collider::new(transform, CollisionType::Car),
+            sprite: SpriteBundle {
+                sprite: Sprite {
+                    color: Color::RED,
+                    ..default()
+                },
+                transform,
+                ..default()
+            },
         }
     }
 }
 
-impl Car {
-    pub fn locomote(&mut self) {
-        self.movement.accelerate();
-        self.movement
-            .set_position(self.movement.get_x(), CAR_Y, self.movement.get_angle());
-    }
-
-    pub fn get_transform(&self) -> Transform {
-        let mut t = Transform::from_xyz(self.movement.get_x(), self.movement.get_y(), CAR_LAYER);
-        t.scale = CAR_SIZE;
-        t.rotation = Quat::from_rotation_z(self.movement.get_angle());
-        t
-    }
-
-    pub fn get_direction(&self) -> DirectionType {
-        self.movement.get_direction()
-    }
-
-    pub fn get_last_direction(&self) -> DirectionType {
-        self.movement.get_last_direction()
-    }
-
-    pub fn get_speed(&self) -> f32 {
-        self.movement.get_speed()
-    }
-
-    pub fn get_angle(&self) -> f32 {
-        self.movement.get_angle()
-    }
-
-    pub fn set_direction(&mut self, direction: DirectionType) {
-        self.movement.set_direction(direction)
-    }
-}
-
-pub fn init_car() -> (Car, Controls, Collider, SpriteBundle) {
-    (
-        Car::default(),
-        Controls,
-        Collider::new(
-            Transform::from_xyz(0., 0., 2.).with_scale(CAR_SIZE),
-            CollisionType::Car,
-        ),
-        SpriteBundle {
-            sprite: Sprite {
-                color: Color::RED,
-                ..default()
-            },
-            transform: Transform {
-                translation: Vec3::new(0., CAR_Y, 2.),
-                scale: CAR_SIZE,
-                ..default()
-            },
-            ..default()
-        },
-    )
+pub fn spawn_player(commands: &mut Commands) {
+    commands
+        .spawn(PlayerCar::default())
+        .with_children(|parent| {
+            parent.spawn(SensorBundle::new(
+                Transform::from_xyz(0., 1., 3.).with_scale(Vec3::new(0.25, 1.1, 1.)),
+            ));
+            parent.spawn(SensorBundle::new(
+                Transform::from_xyz(1., 0., 3.).with_scale(Vec3::new(1.1, 0.15, 1.)),
+            ));
+            parent.spawn(SensorBundle::new(
+                Transform::from_xyz(-1., 0., 3.).with_scale(Vec3::new(1.1, 0.15, 1.)),
+            ));
+            parent.spawn(SensorBundle::new(
+                Transform::from_xyz(0., -1., 3.).with_scale(Vec3::new(0.25, -1.1, 1.)),
+            ));
+        });
 }
 
 pub fn move_car(
-    mut car: Query<(&mut Car, &mut Transform, &mut Collider)>,
-    mut lanes: Query<(&mut Transform, &mut Lane), Without<Car>>,
+    mut car: Query<(&Car, &mut Movement, &mut Transform, &mut Collider)>,
     colliders: Query<&Collider, Without<Car>>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
-    let (mut car, mut transform, mut collider) = car.single_mut();
-    car.locomote();
-    *transform = car.get_transform();
-    collider.set_transform(car.get_transform());
+    let (_, mut movement, mut transform, mut car_collider) = car.single_mut();
 
-    for other_colliders in colliders.iter() {
-        collider.check_collision(other_colliders);
-        match collider.get_collision() {
-            CollisionType::LeftBorder => next_state.set(GameState::GameOver),
-            CollisionType::RightBorder => next_state.set(GameState::GameOver),
+    movement.accelerate();
+    transform.translation.x = movement.get_x();
+    transform.rotation = Quat::from_rotation_z(movement.get_angle());
+    car_collider.set_transform(*transform);
+
+    for other_collider in colliders.iter() {
+        car_collider.check_collision(&other_collider);
+        match car_collider.get_collision() {
+            CollisionType::LeftBorder | CollisionType::RightBorder => {
+                next_state.set(GameState::GameOver);
+            }
             _ => (),
         }
-    }
-
-    for (mut t, mut lane) in lanes.iter_mut() {
-        lane.locomote(&car);
-        t.translation.y = lane.get_y();
     }
 }

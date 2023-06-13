@@ -1,12 +1,12 @@
 use bevy::prelude::*;
 
-use crate::{car::Car, direction::DirectionType};
+use crate::{car::Car, direction::DirectionType, movement::Movement};
 
 #[derive(Component)]
 pub struct Controls;
 
 impl Controls {
-    fn on_keydown(&self, input: &Res<Input<KeyCode>>, car: &mut Car) {
+    fn on_keydown(&self, input: &Res<Input<KeyCode>>, car: &mut Movement) {
         match (
             input.pressed(KeyCode::Up),
             input.pressed(KeyCode::Down),
@@ -33,7 +33,10 @@ impl Controls {
     }
 }
 
-pub fn controls_system(mut car: Query<(&mut Car, &Controls)>, input: Res<Input<KeyCode>>) {
-    let (mut car, controls) = car.single_mut();
-    controls.on_keydown(&input, &mut car);
+pub fn controls_system(
+    mut car: Query<(&Car, &mut Movement, &Controls)>,
+    input: Res<Input<KeyCode>>,
+) {
+    let (car, mut movement, controls) = car.single_mut();
+    controls.on_keydown(&input, &mut movement);
 }
