@@ -54,7 +54,18 @@ pub fn spawn_player(commands: &mut Commands) {
     commands
         .spawn(PlayerCar::default())
         .with_children(|parent| {
-            parent.spawn(SensorBundle::new());
+            parent.spawn(SensorBundle::new(
+                Transform::from_xyz(0., 1., 3.).with_scale(Vec3::new(0.25, 1.1, 1.)),
+            ));
+            parent.spawn(SensorBundle::new(
+                Transform::from_xyz(1., 0., 3.).with_scale(Vec3::new(1.1, 0.15, 1.)),
+            ));
+            parent.spawn(SensorBundle::new(
+                Transform::from_xyz(-1., 0., 3.).with_scale(Vec3::new(1.1, 0.15, 1.)),
+            ));
+            parent.spawn(SensorBundle::new(
+                Transform::from_xyz(0., -1., 3.).with_scale(Vec3::new(0.25, -1.1, 1.)),
+            ));
         });
 }
 

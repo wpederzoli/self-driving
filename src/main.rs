@@ -1,7 +1,9 @@
 use bevy::{prelude::*, window::WindowResolution};
 use car::move_car;
+use collision::draw_colliders;
 use controls::controls_system;
 use road::{move_road, ROAD_HEIGHT};
+use sensor::sensors_collision;
 
 mod car;
 mod collision;
@@ -39,6 +41,7 @@ fn main() {
             controls_system.run_if(in_state(GameState::Play)),
             move_car.run_if(in_state(GameState::Play)),
             move_road.run_if(in_state(GameState::Play)),
+            sensors_collision,
         ))
         .add_system(bevy::window::close_on_esc)
         .run();
