@@ -56,26 +56,27 @@ pub fn spawn_player(commands: &mut Commands) {
         .spawn(PlayerCar::default())
         .with_children(|parent| {
             parent.spawn(SensorBundle::new(
-                Transform::from_xyz(0., 1., SENSOR_LAYER).with_scale(Vec3::new(0.25, 1.1, 1.)),
+                Transform::from_xyz(0., 1., SENSOR_LAYER).with_scale(Vec3::new(0.1, 1.1, 1.)),
             ));
             parent.spawn(SensorBundle::new(
                 Transform::from_xyz(0.5, 0.95, SENSOR_LAYER)
-                    .with_scale(Vec3::new(0.25, 1.1, 1.))
+                    .with_scale(Vec3::new(0.1, 1.1, 1.))
                     .with_rotation(Quat::from_rotation_z(-10.)),
             ));
             parent.spawn(SensorBundle::new(
                 Transform::from_xyz(-0.5, 0.95, SENSOR_LAYER)
-                    .with_scale(Vec3::new(0.25, 1.15, 1.))
+                    .with_scale(Vec3::new(0.1, 1.15, 1.))
                     .with_rotation(Quat::from_rotation_z(10.)),
             ));
             parent.spawn(SensorBundle::new(
-                Transform::from_xyz(1., 0., SENSOR_LAYER).with_scale(Vec3::new(1.1, 0.15, 1.)),
+                Transform::from_xyz(1., 0.7, SENSOR_LAYER)
+                    .with_scale(Vec3::new(1.25, 0.1, 1.))
+                    .with_rotation(Quat::from_rotation_z(35.)),
             ));
             parent.spawn(SensorBundle::new(
-                Transform::from_xyz(-1., 0., SENSOR_LAYER).with_scale(Vec3::new(1.1, 0.15, 1.)),
-            ));
-            parent.spawn(SensorBundle::new(
-                Transform::from_xyz(0., -1., SENSOR_LAYER).with_scale(Vec3::new(0.25, -1.1, 1.)),
+                Transform::from_xyz(-1., 0.7, SENSOR_LAYER)
+                    .with_scale(Vec3::new(1.25, 0.1, 1.))
+                    .with_rotation(Quat::from_rotation_z(-35.)),
             ));
         });
 }
