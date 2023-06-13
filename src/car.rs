@@ -38,7 +38,7 @@ impl Default for PlayerCar {
             car: Car,
             controls: Controls,
             movement: Movement::default(),
-            collider: Collider::new(transform, CollisionType::Car),
+            collider: Collider::new(transform, CollisionType::Player),
             sprite: SpriteBundle {
                 sprite: Sprite {
                     color: Color::RED,
@@ -85,7 +85,7 @@ pub fn move_car(
     for other_collider in colliders.iter() {
         car_collider.check_collision(&other_collider);
         match car_collider.get_collision() {
-            CollisionType::LeftBorder | CollisionType::RightBorder => {
+            CollisionType::LeftBorder | CollisionType::RightBorder | CollisionType::Car => {
                 sprite.color = Color::RED.with_a(0.5);
                 next_state.set(GameState::GameOver);
             }

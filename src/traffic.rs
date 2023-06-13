@@ -6,18 +6,20 @@ use crate::{
     controls::Controls,
     direction::DirectionType,
     movement::Movement,
+    GameState,
 };
 
 pub struct TrafficPlugin;
 
 impl Plugin for TrafficPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup).add_system(move_car);
+        app.add_startup_system(setup)
+            .add_system(move_car.run_if(in_state(GameState::Play)));
     }
 }
 
 fn setup(mut commands: Commands) {
-    let transform = Transform::from_xyz(10., 10., 3.).with_scale(CAR_SIZE);
+    let transform = Transform::from_xyz(0., 0., CAR_LAYER).with_scale(CAR_SIZE);
 
     commands.spawn(TrafficCar {
         car: Car,
@@ -43,12 +45,12 @@ fn move_car(
         movement.set_speed(2.5, 3.0);
         movement.set_direction(DirectionType::Forward);
         movement.accelerate();
-        let t = Vec3::new(
+        transform.translation = Vec3::new(
             movement.get_x(),
             movement.get_y() - player.get_y(),
             CAR_LAYER,
         );
-        transform.translation = t;
+        transform.rotation = Quat::from_rotation_z(movement.get_angle());
         collider.set_transform(*transform);
     }
 }
