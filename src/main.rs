@@ -12,6 +12,7 @@ mod controls;
 mod direction;
 mod lanes;
 mod movement;
+mod neural_network;
 mod position;
 mod road;
 mod sensor;
