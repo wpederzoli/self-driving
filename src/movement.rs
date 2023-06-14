@@ -27,6 +27,16 @@ impl Default for Movement {
 }
 
 impl Movement {
+    pub fn new(x: f32, y: f32, angle: f32) -> Self {
+        Movement {
+            position: Position::new(x, y, angle),
+            direction: Direction::default(),
+            last_direction: DirectionType::Stop,
+            speed: Speed::new(0., 4., 0.05, 0.05),
+            acceleration: Acceleration::new(0.2),
+        }
+    }
+
     pub fn accelerate(&mut self) {
         self.speed.add(self.acceleration.get());
 
@@ -59,8 +69,8 @@ impl Movement {
         self.position.get_y()
     }
 
-    pub fn set_position(&mut self, x: f32, y: f32, angle: f32) {
-        self.position = Position::new(x, y, angle)
+    pub fn set_speed(&mut self, speed: f32, max: f32) {
+        self.speed = Speed::new(speed, max, 0.05, 0.05);
     }
 
     pub fn set_direction(&mut self, direction: DirectionType) {

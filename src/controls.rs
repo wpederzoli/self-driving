@@ -37,6 +37,6 @@ pub fn controls_system(
     mut car: Query<(&Car, &mut Movement, &Controls)>,
     input: Res<Input<KeyCode>>,
 ) {
-    let (car, mut movement, controls) = car.single_mut();
+    let (_, mut movement, controls) = car.single_mut();
     controls.on_keydown(&input, &mut movement);
 }

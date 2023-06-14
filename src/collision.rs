@@ -50,7 +50,6 @@ pub fn draw_colliders(mut col: Query<(&Collider, &mut Sprite)>) {
 pub enum CollisionType {
     None,
     Car,
-    Sensor,
     LeftBorder,
     RightBorder,
 }

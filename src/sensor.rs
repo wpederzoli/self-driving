@@ -2,6 +2,8 @@ use bevy::prelude::*;
 
 use crate::collision::{Collider, CollisionType};
 
+pub const SENSOR_LAYER: f32 = 2.;
+
 #[derive(Component)]
 pub struct Sensor;
 
@@ -25,20 +27,18 @@ impl SensorBundle {
                 transform,
                 ..default()
             },
-            collider: Collider::new(transform, CollisionType::Sensor),
+            collider: Collider::new(transform, CollisionType::None),
         }
     }
 }
 
 pub fn sensors_collision(
-    mut sensors: Query<(&Sensor, &mut Collider, &GlobalTransform)>,
+    mut sensors: Query<(&Sensor, &mut Collider, &GlobalTransform, &mut Sprite)>,
     colliders: Query<&Collider, Without<Sensor>>,
 ) {
-    for (_, mut collider, transform) in sensors.iter_mut() {
+    for (_, mut collider, transform, mut sprite) in sensors.iter_mut() {
         for other_collider in colliders.iter() {
-            let mut t = transform.compute_transform();
-            t.translation.y += 100.;
-            collider.set_transform(t);
+            collider.set_transform(transform.compute_transform());
             collider.check_collision(&other_collider);
             match collider.get_collision() {
                 CollisionType::RightBorder => {
@@ -46,6 +46,10 @@ pub fn sensors_collision(
                 }
                 CollisionType::LeftBorder => {
                     println!("Sensor collided with left border!");
+                }
+                CollisionType::Car => {
+                    sprite.color = Color::YELLOW_GREEN;
+                    println!("Sensor clollided with a Car");
                 }
                 _ => (),
             }

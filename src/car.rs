@@ -1,7 +1,7 @@
 use bevy::{
     prelude::{
         default, BuildChildren, Bundle, Color, Commands, Component, NextState, Quat, Query, ResMut,
-        Transform, Vec3, Without,
+        Transform, Vec3, With, Without,
     },
     sprite::{Sprite, SpriteBundle},
 };
@@ -10,12 +10,12 @@ use crate::{
     collision::{Collider, CollisionType},
     controls::Controls,
     movement::Movement,
-    sensor::SensorBundle,
+    sensor::{SensorBundle, SENSOR_LAYER},
     GameState,
 };
 
-const CAR_LAYER: f32 = 2.;
-const CAR_SIZE: Vec3 = Vec3::new(30., 50., 0.);
+pub const CAR_LAYER: f32 = 3.;
+pub const CAR_SIZE: Vec3 = Vec3::new(30., 50., 0.);
 const CAR_Y: f32 = -150.;
 
 #[derive(Component)]
@@ -38,7 +38,7 @@ impl Default for PlayerCar {
             car: Car,
             controls: Controls,
             movement: Movement::default(),
-            collider: Collider::new(transform, CollisionType::Car),
+            collider: Collider::new(transform, CollisionType::None),
             sprite: SpriteBundle {
                 sprite: Sprite {
                     color: Color::RED,
@@ -56,26 +56,37 @@ pub fn spawn_player(commands: &mut Commands) {
         .spawn(PlayerCar::default())
         .with_children(|parent| {
             parent.spawn(SensorBundle::new(
-                Transform::from_xyz(0., 1., 3.).with_scale(Vec3::new(0.25, 1.1, 1.)),
+                Transform::from_xyz(0., 1., SENSOR_LAYER).with_scale(Vec3::new(0.1, 1.1, 1.)),
             ));
             parent.spawn(SensorBundle::new(
-                Transform::from_xyz(1., 0., 3.).with_scale(Vec3::new(1.1, 0.15, 1.)),
+                Transform::from_xyz(0.5, 0.95, SENSOR_LAYER)
+                    .with_scale(Vec3::new(0.1, 1.1, 1.))
+                    .with_rotation(Quat::from_rotation_z(-10.)),
             ));
             parent.spawn(SensorBundle::new(
-                Transform::from_xyz(-1., 0., 3.).with_scale(Vec3::new(1.1, 0.15, 1.)),
+                Transform::from_xyz(-0.5, 0.95, SENSOR_LAYER)
+                    .with_scale(Vec3::new(0.1, 1.15, 1.))
+                    .with_rotation(Quat::from_rotation_z(10.)),
             ));
             parent.spawn(SensorBundle::new(
-                Transform::from_xyz(0., -1., 3.).with_scale(Vec3::new(0.25, -1.1, 1.)),
+                Transform::from_xyz(1., 0.7, SENSOR_LAYER)
+                    .with_scale(Vec3::new(1.25, 0.1, 1.))
+                    .with_rotation(Quat::from_rotation_z(35.)),
+            ));
+            parent.spawn(SensorBundle::new(
+                Transform::from_xyz(-1., 0.7, SENSOR_LAYER)
+                    .with_scale(Vec3::new(1.25, 0.1, 1.))
+                    .with_rotation(Quat::from_rotation_z(-35.)),
             ));
         });
 }
 
 pub fn move_car(
-    mut car: Query<(&Car, &mut Movement, &mut Transform, &mut Collider)>,
-    colliders: Query<&Collider, Without<Car>>,
+    mut car: Query<(&mut Sprite, &mut Movement, &mut Transform, &mut Collider), With<Controls>>,
+    colliders: Query<&Collider, Without<Controls>>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
-    let (_, mut movement, mut transform, mut car_collider) = car.single_mut();
+    let (mut sprite, mut movement, mut transform, mut car_collider) = car.single_mut();
 
     movement.accelerate();
     transform.translation.x = movement.get_x();
@@ -85,7 +96,8 @@ pub fn move_car(
     for other_collider in colliders.iter() {
         car_collider.check_collision(&other_collider);
         match car_collider.get_collision() {
-            CollisionType::LeftBorder | CollisionType::RightBorder => {
+            CollisionType::LeftBorder | CollisionType::RightBorder | CollisionType::Car => {
+                sprite.color = Color::RED.with_a(0.5);
                 next_state.set(GameState::GameOver);
             }
             _ => (),
