@@ -52,8 +52,8 @@ fn move_car(
     let (mut car, mut transform) = car.single_mut();
 
     let ray_pos = Vec2::new(transform.translation.x, transform.translation.y + 50.);
-    let ray_dir = Vec2::new(0., 1.);
-    let toi = 1.;
+    let ray_dir = Vec2::new(0., 5.);
+    let toi = 5.;
 
     if let Some((entity, toi)) = rp.cast_ray(ray_pos, ray_dir, toi, true, QueryFilter::default()) {
         // The first collider hit has the entity `entity` and it hit after

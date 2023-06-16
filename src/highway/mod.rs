@@ -1,7 +1,8 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::{Collider, RigidBody, Sensor};
 
 use crate::{SCREEN_HEIGHT, SCREEN_WIDTH};
+
+use self::road::ROAD_LAYER;
 
 mod road;
 
@@ -14,16 +15,16 @@ impl Plugin for HighwayPlugin {
 }
 
 fn setup(mut commands: Commands) {
-    commands
-        .spawn(SpriteBundle {
-            sprite: Sprite {
-                color: Color::ANTIQUE_WHITE,
-                custom_size: Some(Vec2::new(100., 40.)),
-                ..default()
-            },
-            transform: Transform::from_xyz(0., 100., 0.),
+    commands.spawn(SpriteBundle {
+        sprite: Sprite {
+            color: Color::DARK_GRAY,
+            custom_size: Some(Vec2::new(SCREEN_WIDTH, SCREEN_HEIGHT)),
             ..default()
-        })
-        .insert(Collider::cuboid(50., 20.))
-        .insert(RigidBody::Fixed);
+        },
+        transform: Transform::from_xyz(0., 0., ROAD_LAYER),
+        ..default()
+    });
+
+    road::draw_borders(&mut commands);
+    road::draw_lines(&mut commands, 3);
 }
