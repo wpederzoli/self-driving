@@ -14,19 +14,6 @@ impl Plugin for HighwayPlugin {
 }
 
 fn setup(mut commands: Commands) {
-    // commands.spawn(SpriteBundle {
-    //     sprite: Sprite {
-    //         color: Color::BLUE,
-    //         ..default()
-    //     },
-    //     transform: Transform::from_xyz(0., 0., 1.).with_scale(Vec3::new(
-    //         SCREEN_WIDTH,
-    //         SCREEN_HEIGHT,
-    //         1.,
-    //     )),
-    //     ..default()
-    // });
-
     commands
         .spawn(SpriteBundle {
             sprite: Sprite {

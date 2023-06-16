@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_rapier2d::{
     prelude::{
         ActiveCollisionTypes, ActiveEvents, Collider, CollisionEvent, ExternalForce, GravityScale,
-        RapierContext, Restitution, RigidBody, Sensor, Velocity,
+        QueryFilter, RapierContext, Restitution, RigidBody, Sensor, Velocity,
     },
     rapier::prelude::{ColliderSet, RigidBodySet},
 };
@@ -22,26 +22,6 @@ impl Plugin for CarPlugin {
 }
 
 fn setup(mut commands: Commands) {
-    // commands
-    //     .spawn((
-    //         SpriteBundle {
-    //             sprite: Sprite {
-    //                 color: Color::RED,
-    //                 custom_size: Some(Vec2::new(50., 50.)),
-    //                 ..default()
-    //             },
-    //             ..default()
-    //         },
-    //         Car {
-    //             speed: 0.,
-    //             max_speed: 3.,
-    //         },
-    //     ))
-    //     .insert(TransformBundle::from_transform(Transform::from_xyz(
-    //         0., -200., 3.,
-    //     )))
-    //     .insert(Collider::cuboid(25., 25.))
-    //     .insert(ActiveEvents::COLLISION_EVENTS);
     commands
         .spawn((
             Car {
@@ -67,9 +47,20 @@ fn move_car(
     mut car: Query<(&mut Car, &mut Transform)>,
     input: Res<Input<KeyCode>>,
     mut col: EventReader<CollisionEvent>,
+    rp: Res<RapierContext>,
 ) {
     let (mut car, mut transform) = car.single_mut();
 
+    let ray_pos = Vec2::new(transform.translation.x, transform.translation.y + 50.);
+    let ray_dir = Vec2::new(0., 1.);
+    let toi = 1.;
+
+    if let Some((entity, toi)) = rp.cast_ray(ray_pos, ray_dir, toi, true, QueryFilter::default()) {
+        // The first collider hit has the entity `entity` and it hit after
+        // the ray travelled a distance equal to `ray_dir * toi`.
+        let hit_point = ray_pos + ray_dir * toi;
+        println!("Entity {:?} hit at point {}", entity, hit_point);
+    }
     for c in col.iter() {
         println!("col: {:?}", c);
     }
