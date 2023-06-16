@@ -19,7 +19,7 @@ impl Plugin for TrafficPlugin {
 }
 
 fn setup(mut commands: Commands) {
-    let transform = Transform::from_xyz(100., 120., CAR_LAYER).with_scale(CAR_SIZE);
+    let transform = Transform::from_xyz(0., 0., CAR_LAYER).with_scale(CAR_SIZE);
 
     commands.spawn(TrafficCar {
         car: Car,
@@ -31,7 +31,7 @@ fn setup(mut commands: Commands) {
             transform,
             ..default()
         },
-        collider: Collider::new(transform, CollisionType::Car),
+        collider: Collider::new(CollisionType::Car),
         movement: Movement::new(transform.translation.x, transform.translation.x, 0.0),
     });
 }
@@ -51,7 +51,7 @@ fn move_car(
             CAR_LAYER,
         );
         transform.rotation = Quat::from_rotation_z(movement.get_angle());
-        collider.set_transform(*transform);
+        // collider.set_transform(*transform);
     }
 }
 

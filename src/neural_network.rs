@@ -1,8 +1,40 @@
 use bevy::prelude::*;
 use rand::Rng;
 
+use crate::{
+    collision::{Collider, CollisionType},
+    sensor::Sensor,
+};
+
 pub struct NeuralNetworkPlugin;
 
+impl Plugin for NeuralNetworkPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_startup_system(setup).add_system(run);
+    }
+}
+
+fn setup(mut commands: Commands) {
+    commands.spawn(NeuralNetwork::new(vec![4, 6, 4])); //input count, layer1 nodes, output count
+}
+
+fn run(sensors: Query<&Collider, With<Sensor>>, mut network: Query<&mut NeuralNetwork>) {
+    let mut v: Vec<f32> = Vec::new();
+    for sensor in sensors.iter() {
+        match sensor.get_collision() {
+            CollisionType::None => v.push(0.),
+            _ => {
+                println!("not none");
+                v.push(1.);
+            }
+        }
+    }
+
+    let mut nn = network.single_mut();
+    let out = nn.feed_forward(v);
+}
+
+#[derive(Component)]
 pub struct NeuralNetwork {
     layers: Vec<Layer>,
 }
@@ -17,12 +49,13 @@ impl NeuralNetwork {
         NeuralNetwork { layers }
     }
 
-    pub fn feed_forward(&mut self, given_inputs: Vec<f32>) {
+    pub fn feed_forward(&mut self, given_inputs: Vec<f32>) -> Vec<f32> {
         self.layers[0].feed_forward(&given_inputs);
         for i in 1..self.layers.len() {
             let prev = self.layers[i - 1].inputs.clone();
             self.layers[i].feed_forward(&prev);
         }
+        self.layers[self.layers.len() - 1].inputs.clone()
     }
 }
 
@@ -76,6 +109,8 @@ impl Layer {
                 self.weights[i][o] = r * 2. - 1.;
             }
         }
+
+        self.randomize_biases();
     }
 
     fn randomize_biases(&mut self) {

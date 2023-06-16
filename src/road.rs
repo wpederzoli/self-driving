@@ -31,7 +31,7 @@ impl Border {
                 transform,
                 ..default()
             },
-            collider: Collider::new(transform, collision_type),
+            collider: Collider::new(collision_type),
         }
     }
 }
