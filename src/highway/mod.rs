@@ -40,7 +40,6 @@ fn move_road(
     let (car, car_transform, controller) = car.single();
 
     for mut transform in road.iter_mut() {
-        println!("reset {}", transform.translation);
         match controller.get_direction() {
             Direction::Forward | Direction::ForwardRight | Direction::ForwardLeft => {
                 transform.translation.y =
@@ -54,12 +53,10 @@ fn move_road(
         }
 
         if transform.translation.y >= SCREEN_HEIGHT / 2. {
-            println!("reset {}", transform.translation);
             transform.translation.y = -SCREEN_HEIGHT;
         }
 
         if transform.translation.y <= -SCREEN_HEIGHT / 2. {
-            println!("reset {}", transform.translation);
             transform.translation.y = 0.;
         }
     }
