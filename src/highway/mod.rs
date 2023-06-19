@@ -36,9 +36,9 @@ fn setup(mut commands: Commands) {
 
 fn move_road(
     mut road: Query<&mut Transform, With<Lane>>,
-    car: Query<(&Car, &Transform, &Controller), Without<Lane>>,
+    car: Query<(&Car, &Transform), (Without<Lane>, With<Controller>)>,
 ) {
-    let (car, car_transform, controller) = car.single();
+    let (car, car_transform) = car.single();
 
     for mut transform in road.iter_mut() {
         match car.get_direction() {

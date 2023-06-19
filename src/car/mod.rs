@@ -1,10 +1,6 @@
 use bevy::prelude::*;
-use bevy_rapier2d::{
-    prelude::{
-        ActiveCollisionTypes, ActiveEvents, Collider, CollisionEvent, ExternalForce, GravityScale,
-        QueryFilter, RapierContext, Restitution, RigidBody, Sensor, Velocity,
-    },
-    rapier::prelude::{ColliderSet, RigidBodySet},
+use bevy_rapier2d::prelude::{
+    ActiveCollisionTypes, ActiveEvents, Collider, CollisionEvent, QueryFilter, RapierContext,
 };
 
 use crate::GameState;
@@ -90,7 +86,7 @@ fn move_car(
         let hit_point = ray_pos + ray_dir * toi;
         println!("Entity {:?} hit at point {}", entity, hit_point);
     }
-    for c in col.iter() {
+    for _ in col.iter() {
         println!("collided");
         next_state.set(GameState::GameOver);
     }

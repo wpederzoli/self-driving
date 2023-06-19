@@ -20,9 +20,9 @@ pub struct Controller;
 
 pub fn controller_system(
     input: Res<Input<KeyCode>>,
-    mut car: Query<(&mut Transform, &mut Car, &mut Controller)>,
+    mut car: Query<(&mut Transform, &mut Car), With<Controller>>,
 ) {
-    let (mut transform, mut car, mut controller) = car.single_mut();
+    let (mut transform, mut car) = car.single_mut();
 
     match (
         input.pressed(KeyCode::Up),

@@ -34,23 +34,10 @@ fn main() {
         .add_plugin(CarPlugin)
         .add_plugin(HighwayPlugin)
         .add_plugin(Traffic)
-        // .add_plugin(TrafficPlugin)
-        // .add_state::<GameState>()
-        // .add_startup_system(setup)
-        // .add_systems((
-        //     controls_system.run_if(in_state(GameState::Play)),
-        //     move_car.run_if(in_state(GameState::Play)),
-        //     move_road.run_if(in_state(GameState::Play)),
-        //     sensors_collision,
-        // ))
         .add_system(bevy::window::close_on_esc)
         .run();
 }
 
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-    // car::spawn_player(&mut commands);
-    // road::spawn_road(&mut commands, 3, 0.);
-    // road::spawn_road(&mut commands, 3, ROAD_HEIGHT);
-    // road::spawn_road(&mut commands, 3, -ROAD_HEIGHT);
 }
