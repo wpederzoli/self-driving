@@ -1,7 +1,7 @@
 use bevy::{prelude::*, window::WindowResolution};
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_rapier2d::prelude::*;
-use car::CarPlugin;
+use car::{traffic::Traffic, CarPlugin};
 use highway::HighwayPlugin;
 
 mod car;
@@ -33,6 +33,7 @@ fn main() {
         .add_plugin(RapierDebugRenderPlugin::default())
         .add_plugin(CarPlugin)
         .add_plugin(HighwayPlugin)
+        .add_plugin(Traffic)
         // .add_plugin(TrafficPlugin)
         // .add_state::<GameState>()
         // .add_startup_system(setup)

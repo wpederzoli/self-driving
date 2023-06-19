@@ -13,13 +13,17 @@ use self::controller::{controller_system, Controller, Direction};
 
 pub struct CarPlugin;
 pub mod controller;
+pub mod traffic;
 
 const CAR_LAYER: f32 = 2.;
+const CAR_SIZE: Vec2 = Vec2::new(40., 60.);
 
 #[derive(Component)]
 pub struct Car {
     pub speed: f32,
     max_speed: f32,
+    direction: Direction,
+    last_direction: Direction,
 }
 
 impl Car {
@@ -36,6 +40,18 @@ impl Car {
             self.speed = 0.;
         }
     }
+
+    pub fn set_direction(&mut self, direction: Direction) {
+        self.direction = direction;
+    }
+
+    pub fn get_direction(&self) -> Direction {
+        self.direction
+    }
+
+    pub fn get_last_direction(&self) -> Direction {
+        self.last_direction
+    }
 }
 
 impl Plugin for CarPlugin {
@@ -49,29 +65,15 @@ impl Plugin for CarPlugin {
 
 fn setup(mut commands: Commands) {
     commands
-        .spawn((
-            Car {
-                speed: 0.,
-                max_speed: 3.,
-            },
-            Controller::new(Direction::Forward),
-            SpriteBundle {
-                sprite: Sprite {
-                    color: Color::RED,
-                    custom_size: Some(Vec2::new(40., 60.)),
-                    ..default()
-                },
-                transform: Transform::from_xyz(0., -256., CAR_LAYER),
-                ..default()
-            },
-        ))
+        .spawn(spawn_car(3., Color::RED, Vec2::new(0., -256.)))
+        .insert(Controller)
         .insert(Collider::cuboid(20., 30.))
         .insert(ActiveCollisionTypes::default() | ActiveCollisionTypes::all())
         .insert(ActiveEvents::COLLISION_EVENTS);
 }
 
 fn move_car(
-    mut car: Query<(&mut Car, &mut Transform)>,
+    mut car: Query<(&mut Car, &mut Transform), With<Controller>>,
     mut col: EventReader<CollisionEvent>,
     rp: Res<RapierContext>,
     mut next_state: ResMut<NextState<GameState>>,
@@ -92,4 +94,24 @@ fn move_car(
         println!("collided");
         next_state.set(GameState::GameOver);
     }
+}
+
+pub fn spawn_car(max_speed: f32, color: Color, position: Vec2) -> (Car, SpriteBundle) {
+    (
+        Car {
+            speed: 0.,
+            max_speed,
+            direction: Direction::Forward,
+            last_direction: Direction::Forward,
+        },
+        SpriteBundle {
+            sprite: Sprite {
+                color,
+                custom_size: Some(CAR_SIZE),
+                ..default()
+            },
+            transform: Transform::from_xyz(position.x, position.y, CAR_LAYER),
+            ..default()
+        },
+    )
 }

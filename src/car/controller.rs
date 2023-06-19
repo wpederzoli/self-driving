@@ -16,31 +16,7 @@ pub enum Direction {
 }
 
 #[derive(Component)]
-pub struct Controller {
-    direction: Direction,
-    last_direction: Direction,
-}
-
-impl Controller {
-    pub fn new(direction: Direction) -> Self {
-        Controller {
-            direction,
-            last_direction: direction,
-        }
-    }
-
-    pub fn set_direction(&mut self, direction: Direction) {
-        self.direction = direction;
-    }
-
-    pub fn get_direction(&self) -> Direction {
-        self.direction
-    }
-
-    pub fn get_last_direction(&self) -> Direction {
-        self.last_direction
-    }
-}
+pub struct Controller;
 
 pub fn controller_system(
     input: Res<Input<KeyCode>>,
@@ -54,23 +30,23 @@ pub fn controller_system(
         input.pressed(KeyCode::Left),
         input.pressed(KeyCode::Right),
     ) {
-        (true, false, false, false) => controller.set_direction(Direction::Forward),
-        (true, false, true, false) => controller.set_direction(Direction::ForwardLeft),
-        (true, false, false, true) => controller.set_direction(Direction::ForwardRight),
-        (false, true, false, false) => controller.set_direction(Direction::Backwards),
-        (false, true, true, false) => controller.set_direction(Direction::BackwardsLeft),
-        (false, true, false, true) => controller.set_direction(Direction::BackwardsRight),
-        (false, false, true, false) => controller.set_direction(Direction::Left),
-        (false, false, false, true) => controller.set_direction(Direction::Right),
+        (true, false, false, false) => car.set_direction(Direction::Forward),
+        (true, false, true, false) => car.set_direction(Direction::ForwardLeft),
+        (true, false, false, true) => car.set_direction(Direction::ForwardRight),
+        (false, true, false, false) => car.set_direction(Direction::Backwards),
+        (false, true, true, false) => car.set_direction(Direction::BackwardsLeft),
+        (false, true, false, true) => car.set_direction(Direction::BackwardsRight),
+        (false, false, true, false) => car.set_direction(Direction::Left),
+        (false, false, false, true) => car.set_direction(Direction::Right),
         _ => {
-            if controller.direction != Direction::Stop {
-                controller.last_direction = controller.direction;
-                controller.set_direction(Direction::Stop);
+            if car.direction != Direction::Stop {
+                car.last_direction = car.direction;
+                car.set_direction(Direction::Stop);
             }
         }
     }
 
-    match controller.get_direction() {
+    match car.get_direction() {
         Direction::Forward => {
             car.accelerate();
             transform.translation.x = transform.translation.x + transform.up().x * car.speed;
@@ -113,7 +89,7 @@ pub fn controller_system(
         }
         Direction::Stop => {
             car.decelerate();
-            match controller.last_direction {
+            match car.last_direction {
                 Direction::Forward => {
                     transform.translation.x = transform.translation.x + transform.up().x * car.speed
                 }

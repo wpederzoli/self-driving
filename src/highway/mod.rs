@@ -8,7 +8,7 @@ use crate::{
 
 use self::road::{Lane, ROAD_LAYER};
 
-mod road;
+pub mod road;
 
 pub struct HighwayPlugin;
 
@@ -41,7 +41,7 @@ fn move_road(
     let (car, car_transform, controller) = car.single();
 
     for mut transform in road.iter_mut() {
-        match controller.get_direction() {
+        match car.get_direction() {
             Direction::Forward | Direction::ForwardRight | Direction::ForwardLeft => {
                 transform.translation.y =
                     transform.translation.y - car_transform.up().y * car.speed;
@@ -50,7 +50,7 @@ fn move_road(
                 transform.translation.y =
                     transform.translation.y + car_transform.up().y * car.speed;
             }
-            Direction::Stop => match controller.get_last_direction() {
+            Direction::Stop => match car.get_last_direction() {
                 Direction::Forward | Direction::ForwardLeft | Direction::ForwardRight => {
                     transform.translation.y =
                         transform.translation.y - car_transform.up().y * car.speed;
