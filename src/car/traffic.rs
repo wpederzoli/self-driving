@@ -30,7 +30,16 @@ fn move_traffic(
     let (player, car_transform) = player.single();
     for (mut transform, mut car) in traffic.iter_mut() {
         car.accelerate();
-        transform.translation.y =
-            transform.translation.y - (car_transform.up().y * player.speed) + car.speed;
+        match player.get_direction() {
+            Direction::Forward | Direction::ForwardRight | Direction::ForwardLeft => {
+                transform.translation.y =
+                    transform.translation.y - (car_transform.up().y * player.speed) + car.speed;
+            }
+            Direction::Backwards | Direction::BackwardsRight | Direction::BackwardsLeft => {
+                transform.translation.y =
+                    transform.translation.y + (car_transform.up().y * player.speed) + car.speed;
+            }
+            _ => transform.translation.y += car.speed,
+        }
     }
 }
