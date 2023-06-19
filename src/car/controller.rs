@@ -109,7 +109,6 @@ pub fn controller_system(
             car.decelerate();
             match controller.last_direction {
                 Direction::Forward => {
-                    println!("Forward plx: {}", car.speed);
                     transform.translation = transform.translation + transform.up() * car.speed
                 }
                 Direction::Backwards => {
@@ -118,6 +117,5 @@ pub fn controller_system(
                 _ => (),
             }
         }
-        _ => (),
     }
 }

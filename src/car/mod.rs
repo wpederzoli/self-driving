@@ -12,6 +12,8 @@ use self::controller::{controller_system, Controller, Direction};
 pub struct CarPlugin;
 mod controller;
 
+const CAR_LAYER: f32 = 2.;
+
 #[derive(Component)]
 pub struct Car {
     pub speed: f32,
@@ -52,14 +54,14 @@ fn setup(mut commands: Commands) {
             SpriteBundle {
                 sprite: Sprite {
                     color: Color::RED,
-                    custom_size: Some(Vec2::new(50., 50.)),
+                    custom_size: Some(Vec2::new(40., 60.)),
                     ..default()
                 },
-                transform: Transform::from_xyz(0., -256., 0.),
+                transform: Transform::from_xyz(0., -256., CAR_LAYER),
                 ..default()
             },
         ))
-        .insert(Collider::cuboid(25., 25.))
+        .insert(Collider::cuboid(20., 30.))
         .insert(ActiveCollisionTypes::default() | ActiveCollisionTypes::all())
         .insert(ActiveEvents::COLLISION_EVENTS);
 }
