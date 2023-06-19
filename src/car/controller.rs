@@ -67,31 +67,31 @@ pub fn controller_system(
     match controller.get_direction() {
         Direction::Forward => {
             car.accelerate();
-            transform.translation = transform.translation + transform.up() * car.speed;
+            transform.translation.x = transform.translation.x + transform.up().x * car.speed;
         }
         Direction::ForwardLeft => {
             car.accelerate();
             transform.rotate_z(0.05);
-            transform.translation = transform.translation + transform.up() * car.speed;
+            transform.translation.x = transform.translation.x + transform.up().x * car.speed;
         }
         Direction::ForwardRight => {
             car.accelerate();
             transform.rotate_z(-0.05);
-            transform.translation = transform.translation + transform.up() * car.speed;
+            transform.translation.x = transform.translation.x + transform.up().x * car.speed;
         }
         Direction::Backwards => {
             car.accelerate();
-            transform.translation = transform.translation + transform.down() * car.speed / 2.;
+            transform.translation.x = transform.translation.x + transform.down().x * car.speed / 2.;
         }
         Direction::BackwardsLeft => {
             car.accelerate();
             transform.rotate_z(0.05);
-            transform.translation = transform.translation + transform.down() * car.speed / 2.;
+            transform.translation.x = transform.translation.x + transform.down().x * car.speed / 2.;
         }
         Direction::BackwardsRight => {
             car.accelerate();
             transform.rotate_z(-0.05);
-            transform.translation = transform.translation + transform.down() * car.speed / 2.;
+            transform.translation.x = transform.translation.x + transform.down().x * car.speed / 2.;
         }
         Direction::Left => {
             if car.speed > 0. {

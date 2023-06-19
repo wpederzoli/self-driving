@@ -10,7 +10,7 @@ use bevy_rapier2d::{
 use self::controller::{controller_system, Controller, Direction};
 
 pub struct CarPlugin;
-mod controller;
+pub mod controller;
 
 const CAR_LAYER: f32 = 2.;
 

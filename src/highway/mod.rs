@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 
-use crate::{car::Car, SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::{
+    car::controller::Controller,
+    car::{controller::Direction, Car},
+    SCREEN_HEIGHT, SCREEN_WIDTH,
+};
 
 use self::road::{Lane, ROAD_LAYER};
 
@@ -29,18 +33,34 @@ fn setup(mut commands: Commands) {
     road::draw_lines(&mut commands, 3);
 }
 
-fn move_road(mut road: Query<&mut Transform, With<Lane>>, car: Query<&Car>) {
-    // let car_speed = car.single().speed;
-    //
-    // for mut transform in road.iter_mut() {
-    //     println!("pos: {}", transform.translation.y);
-    //     transform.translation.y += car_speed;
-    //     if transform.translation.y >= SCREEN_HEIGHT / 2. {
-    //         transform.translation.y = -SCREEN_HEIGHT / 2.;
-    //     }
-    //
-    //     if transform.translation.y <= -SCREEN_HEIGHT / 2. {
-    //         transform.translation.y = SCREEN_HEIGHT / 2.
-    //     }
-    // }
+fn move_road(
+    mut road: Query<&mut Transform, With<Lane>>,
+    car: Query<(&Car, &Transform, &Controller), Without<Lane>>,
+) {
+    let (car, car_transform, controller) = car.single();
+
+    for mut transform in road.iter_mut() {
+        println!("reset {}", transform.translation);
+        match controller.get_direction() {
+            Direction::Forward | Direction::ForwardRight | Direction::ForwardLeft => {
+                transform.translation.y =
+                    transform.translation.y - car_transform.up().y * car.speed;
+            }
+            Direction::Backwards | Direction::BackwardsLeft | Direction::BackwardsRight => {
+                transform.translation.y =
+                    transform.translation.y + car_transform.up().y * car.speed;
+            }
+            _ => (),
+        }
+
+        if transform.translation.y >= SCREEN_HEIGHT / 2. {
+            println!("reset {}", transform.translation);
+            transform.translation.y = -SCREEN_HEIGHT;
+        }
+
+        if transform.translation.y <= -SCREEN_HEIGHT / 2. {
+            println!("reset {}", transform.translation);
+            transform.translation.y = 0.;
+        }
+    }
 }
