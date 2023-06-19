@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{SCREEN_HEIGHT, SCREEN_WIDTH};
+use crate::{car::Car, SCREEN_HEIGHT, SCREEN_WIDTH};
 
 use self::road::{Lane, ROAD_LAYER};
 
@@ -29,12 +29,18 @@ fn setup(mut commands: Commands) {
     road::draw_lines(&mut commands, 3);
 }
 
-fn move_road(mut road: Query<&mut Transform, With<Lane>>) {
-    for mut transform in road.iter_mut() {
-        println!("pos: {}", transform.translation.y);
-        transform.translation.y += 1.;
-        if transform.translation.y >= SCREEN_HEIGHT / 2. {
-            transform.translation.y = -SCREEN_HEIGHT / 2.;
-        }
-    }
+fn move_road(mut road: Query<&mut Transform, With<Lane>>, car: Query<&Car>) {
+    // let car_speed = car.single().speed;
+    //
+    // for mut transform in road.iter_mut() {
+    //     println!("pos: {}", transform.translation.y);
+    //     transform.translation.y += car_speed;
+    //     if transform.translation.y >= SCREEN_HEIGHT / 2. {
+    //         transform.translation.y = -SCREEN_HEIGHT / 2.;
+    //     }
+    //
+    //     if transform.translation.y <= -SCREEN_HEIGHT / 2. {
+    //         transform.translation.y = SCREEN_HEIGHT / 2.
+    //     }
+    // }
 }

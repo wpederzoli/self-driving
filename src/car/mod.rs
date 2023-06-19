@@ -7,17 +7,37 @@ use bevy_rapier2d::{
     rapier::prelude::{ColliderSet, RigidBodySet},
 };
 
+use self::controller::{controller_system, Controller, Direction};
+
 pub struct CarPlugin;
+mod controller;
 
 #[derive(Component)]
-struct Car {
+pub struct Car {
     pub speed: f32,
     max_speed: f32,
 }
 
+impl Car {
+    pub fn accelerate(&mut self) {
+        self.speed += 0.2;
+        if self.speed > self.max_speed {
+            self.speed = self.max_speed;
+        }
+    }
+
+    pub fn decelerate(&mut self) {
+        self.speed -= 0.2;
+        if self.speed < 0. {
+            self.speed = 0.;
+        }
+    }
+}
+
 impl Plugin for CarPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup).add_system(move_car);
+        app.add_startup_system(setup)
+            .add_systems((move_car, controller_system));
     }
 }
 
@@ -28,6 +48,7 @@ fn setup(mut commands: Commands) {
                 speed: 0.,
                 max_speed: 3.,
             },
+            Controller::new(Direction::Forward),
             SpriteBundle {
                 sprite: Sprite {
                     color: Color::RED,
@@ -45,7 +66,6 @@ fn setup(mut commands: Commands) {
 
 fn move_car(
     mut car: Query<(&mut Car, &mut Transform)>,
-    input: Res<Input<KeyCode>>,
     mut col: EventReader<CollisionEvent>,
     rp: Res<RapierContext>,
 ) {
@@ -64,18 +84,4 @@ fn move_car(
     for c in col.iter() {
         println!("col: {:?}", c);
     }
-
-    if input.pressed(KeyCode::Up) {
-        car.speed += 0.2;
-        if car.speed <= -car.max_speed {
-            car.speed = -car.max_speed;
-        }
-    } else {
-        car.speed -= 0.2;
-        if car.speed < 0. {
-            car.speed = 0.
-        }
-    }
-
-    transform.translation.y += car.speed;
 }
