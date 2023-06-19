@@ -20,6 +20,7 @@ pub enum GameState {
 fn main() {
     App::new()
         .add_startup_system(setup)
+        .add_state::<GameState>()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 resolution: WindowResolution::new(SCREEN_WIDTH, SCREEN_HEIGHT),

@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::{
     car::controller::Controller,
     car::{controller::Direction, Car},
-    SCREEN_HEIGHT, SCREEN_WIDTH,
+    GameState, SCREEN_HEIGHT, SCREEN_WIDTH,
 };
 
 use self::road::{Lane, ROAD_LAYER};
@@ -14,7 +14,8 @@ pub struct HighwayPlugin;
 
 impl Plugin for HighwayPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup).add_system(move_road);
+        app.add_startup_system(setup)
+            .add_system(move_road.run_if(in_state(GameState::Play)));
     }
 }
 

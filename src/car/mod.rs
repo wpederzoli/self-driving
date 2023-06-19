@@ -7,6 +7,8 @@ use bevy_rapier2d::{
     rapier::prelude::{ColliderSet, RigidBodySet},
 };
 
+use crate::GameState;
+
 use self::controller::{controller_system, Controller, Direction};
 
 pub struct CarPlugin;
@@ -38,8 +40,10 @@ impl Car {
 
 impl Plugin for CarPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup)
-            .add_systems((move_car, controller_system));
+        app.add_startup_system(setup).add_systems((
+            move_car,
+            controller_system.run_if(in_state(GameState::Play)),
+        ));
     }
 }
 
@@ -70,10 +74,11 @@ fn move_car(
     mut car: Query<(&mut Car, &mut Transform)>,
     mut col: EventReader<CollisionEvent>,
     rp: Res<RapierContext>,
+    mut next_state: ResMut<NextState<GameState>>,
 ) {
     let (mut car, mut transform) = car.single_mut();
 
-    let ray_pos = Vec2::new(transform.translation.x, transform.translation.y + 50.);
+    let ray_pos = Vec2::new(transform.translation.x, transform.translation.y + 60.);
     let ray_dir = Vec2::new(0., 5.);
     let toi = 5.;
 
@@ -84,6 +89,7 @@ fn move_car(
         println!("Entity {:?} hit at point {}", entity, hit_point);
     }
     for c in col.iter() {
-        println!("col: {:?}", c);
+        println!("collided");
+        next_state.set(GameState::GameOver);
     }
 }
