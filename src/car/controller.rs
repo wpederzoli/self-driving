@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use super::Car;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Direction {
     Forward,
     ForwardRight,
@@ -36,6 +36,10 @@ impl Controller {
     pub fn get_direction(&self) -> Direction {
         self.direction
     }
+
+    pub fn get_last_direction(&self) -> Direction {
+        self.last_direction
+    }
 }
 
 pub fn controller_system(
@@ -59,8 +63,10 @@ pub fn controller_system(
         (false, false, true, false) => controller.set_direction(Direction::Left),
         (false, false, false, true) => controller.set_direction(Direction::Right),
         _ => {
-            controller.last_direction = controller.direction;
-            controller.set_direction(Direction::Stop);
+            if controller.direction != Direction::Stop {
+                controller.last_direction = controller.direction;
+                controller.set_direction(Direction::Stop);
+            }
         }
     }
 
@@ -109,10 +115,11 @@ pub fn controller_system(
             car.decelerate();
             match controller.last_direction {
                 Direction::Forward => {
-                    transform.translation = transform.translation + transform.up() * car.speed
+                    transform.translation.x = transform.translation.x + transform.up().x * car.speed
                 }
                 Direction::Backwards => {
-                    transform.translation = transform.translation + transform.down() * car.speed
+                    transform.translation.x =
+                        transform.translation.x + transform.down().x * car.speed
                 }
                 _ => (),
             }

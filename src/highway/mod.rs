@@ -49,6 +49,17 @@ fn move_road(
                 transform.translation.y =
                     transform.translation.y + car_transform.up().y * car.speed;
             }
+            Direction::Stop => match controller.get_last_direction() {
+                Direction::Forward | Direction::ForwardLeft | Direction::ForwardRight => {
+                    transform.translation.y =
+                        transform.translation.y - car_transform.up().y * car.speed;
+                }
+                Direction::Backwards | Direction::BackwardsLeft | Direction::BackwardsRight => {
+                    transform.translation.y =
+                        transform.translation.y + car_transform.up().y * car.speed;
+                }
+                _ => (),
+            },
             _ => (),
         }
 
